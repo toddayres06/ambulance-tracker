@@ -15,26 +15,33 @@ const MapOverview = () => {
         const data = await res.json();
         setLiveUnit([data.latitude, data.longitude]);
       } catch (err) {
-        console.error(err);
+        console.error('Error fetching live unit location:', err);
         setError('Unable to fetch live unit location');
       }
     };
 
     fetchLiveLocation();
+    const intervalId = setInterval(fetchLiveLocation, 5000);
 
-    const interval = setInterval(fetchLiveLocation, 5000);
-    return () => clearInterval(interval);
+    return () => clearInterval(intervalId); // Cleanup when unmounting
   }, []);
+
+  const liveUnitIcon = L.icon({
+    iconUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+  });
 
   return (
     <div className="h-screen w-full p-4">
       <h2 className="text-2xl font-bold mb-4">All Units Overview</h2>
+
       {error && (
-    <div className="text-red-500 mb-2">{error}</div>
-    )}
+        <div className="text-red-500 mb-2">{error}</div>
+      )}
 
       <MapContainer
-        center={[29.7604, -95.3698]} // Houston, TX
+        center={liveUnit || [29.7604, -95.3698]}
         zoom={10}
         className="h-[80vh] w-full rounded-xl shadow"
       >
@@ -43,23 +50,7 @@ const MapOverview = () => {
           attribution="&copy; OpenStreetMap contributors"
         />
 
-        {liveUnit && (
-          <Marker
-            position={liveUnit}
-            icon={L.icon({
-              iconUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
-              iconSize: [25, 41],
-              iconAnchor: [12, 41],
-            })}
-          >
-            <Popup>
-              <strong>Live Unit</strong><br />
-              Latitude: {liveUnit[0].toFixed(4)}<br />
-              Longitude: {liveUnit[1].toFixed(4)}
-            </Popup>
-          </Marker>
-        )}
-
+        {/* Static mock units */}
         {mockUnits.map((unit) => (
           <Marker
             key={unit.id}
@@ -72,6 +63,20 @@ const MapOverview = () => {
             </Popup>
           </Marker>
         ))}
+
+        {/* Live moving unit */}
+        {liveUnit && (
+          <Marker
+            position={liveUnit}
+            icon={liveUnitIcon}
+          >
+            <Popup>
+              <strong>Live Unit</strong><br />
+              Latitude: {liveUnit[0].toFixed(4)}<br />
+              Longitude: {liveUnit[1].toFixed(4)}
+            </Popup>
+          </Marker>
+        )}
       </MapContainer>
     </div>
   );

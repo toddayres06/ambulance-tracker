@@ -1,21 +1,38 @@
-// node index.js in terminal to start backend
-
+const cors = require('cors')
 const express = require('express');
 const app = express();
 const PORT = 3001;
 
-let latestLocation = null; // Store the last known location
+app.use(cors()); 
+app.use(express.json()); 
 
-app.use(express.json());
+// Mock live location
+let currentLat = 29.7604; // Houston
+let currentLng = -95.3698;
 
-// This route receives and stores location data
+// Slightly move coordinates every few seconds
+setInterval(() => {
+  currentLat += (Math.random() - 0.5) * 0.001;
+  currentLng += (Math.random() - 0.5) * 0.001;
+}, 5000);
+
+// API endpoint to get live location
+app.get('/api/location', (req, res) => {
+  res.json({
+    latitude: currentLat,
+    longitude: currentLng,
+  });
+});
+
+// Store and retrieve latest posted location
+let latestLocation = null; 
+
 app.post('/api/location', (req, res) => {
   console.log('Received location:', req.body);
-  latestLocation = req.body; // Save the latest location
+  latestLocation = req.body;
   res.status(200).send('Location received');
 });
 
-// This route serves the most recent location
 app.get('/api/latest-location', (req, res) => {
   if (!latestLocation) {
     return res.status(404).json({ error: 'No location data available' });
@@ -23,6 +40,7 @@ app.get('/api/latest-location', (req, res) => {
   res.status(200).json(latestLocation);
 });
 
+// Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
