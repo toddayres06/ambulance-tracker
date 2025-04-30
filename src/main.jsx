@@ -4,7 +4,10 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './index.css';
 import 'leaflet/dist/leaflet.css';
 
+import { ROLES } from './constants/roles'
+
 import { Toaster } from 'react-hot-toast'
+import DebugToken from './components/DebugToken'
 import Layout from './Layout.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Units from './pages/Units.jsx';
@@ -34,23 +37,25 @@ const router = createBrowserRouter([
       { path: 'dispatcher', element: <Dispatcher /> },
       { path: 'login', element: <LoginForm /> },
       { 
-        element: <PrivateRoute requiredRole="admin" />,
+        element: <PrivateRoute requiredRole={ROLES.ADMIN} />,
         children: [
           { path: 'admin-dashboard', element: <AdminDashboard /> }
         ]
       },
       { 
-        element: <PrivateRoute requiredRole="emt" />,
+        element: <PrivateRoute requiredRole={ROLES.EMT} />,
         children: [
           { path: 'emt-dashboard', element: <EMTDashboard /> }
         ]
       },
       { 
-        element: <PrivateRoute requiredRole="dispatcher" />,
+        element: <PrivateRoute requiredRole={ROLES.DISPATCHER} />,
         children: [
           { path: 'dispatcher-dashboard', element: <DispatcherDashboard /> }
         ]
       },
+      { path: 'unauthorized', element: <div>You are not authorized to view this page.</div> },
+      { path: '/debug-token', element:  <DebugToken /> },
       { path: '*', element: <NotFound />}
     ],
   },
