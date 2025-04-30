@@ -4,13 +4,20 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './index.css';
 import 'leaflet/dist/leaflet.css';
 
+import { Toaster } from 'react-hot-toast'
 import Layout from './Layout.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Units from './pages/Units.jsx';
 import UnitDetail from './pages/UnitDetail.jsx'
 import MapView from './pages/MapView.jsx'
 import MapOverview from './pages/MapOverview.jsx'
-import UnitTracker from './pages/UnitTracker'
+import UnitTracker from './pages/UnitTracker.jsx'
+import Dispatcher from './pages/Dispatcher.jsx'
+import LoginForm from './pages/LoginForm'
+import DispatcherDashboard from './pages/DispatcherDashboard'
+import AdminDashboard from './pages/AdminDashboard'
+import EMTDashboard from './pages/EMTDashboard'
+import PrivateRoute from './components/PrivateRoute'
 import NotFound from './pages/NotFound.jsx'
 
 const router = createBrowserRouter([
@@ -21,9 +28,29 @@ const router = createBrowserRouter([
       { index: true, element: <Dashboard /> },
       { path: 'units', element: <Units /> },
       { path: 'unit/:id', element: <UnitDetail /> },
-      { path: 'live-map', element: <MapView />},
+      { path: 'live-map', element: <MapView /> },
       { path: 'map-overview', element: <MapOverview /> },
-      { path: 'track', element: <UnitTracker />},
+      { path: 'track', element: <UnitTracker /> },
+      { path: 'dispatcher', element: <Dispatcher /> },
+      { path: 'login', element: <LoginForm /> },
+      { 
+        element: <PrivateRoute requiredRole="admin" />,
+        children: [
+          { path: 'admin-dashboard', element: <AdminDashboard /> }
+        ]
+      },
+      { 
+        element: <PrivateRoute requiredRole="emt" />,
+        children: [
+          { path: 'emt-dashboard', element: <EMTDashboard /> }
+        ]
+      },
+      { 
+        element: <PrivateRoute requiredRole="dispatcher" />,
+        children: [
+          { path: 'dispatcher-dashboard', element: <DispatcherDashboard /> }
+        ]
+      },
       { path: '*', element: <NotFound />}
     ],
   },
@@ -32,5 +59,7 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <RouterProvider router={router} />
+    <Toaster position="top-center" reverseOrder={false} />
   </React.StrictMode>
 );
+        

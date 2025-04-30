@@ -1,46 +1,90 @@
-const cors = require('cors')
+const cors = require('cors');
 const express = require('express');
 const app = express();
+const authRoutes = require('./routes/authRoutes'); // 👈 new import
+
+const { authenticateToken } = require('./middleware/authMiddleware');
+const { authorizeRole } = require('./middleware/roleMiddleware');
+
 const PORT = 3001;
 
-app.use(cors()); 
-app.use(express.json()); 
+app.use(cors());
+app.use(express.json());
 
-// Mock live location
-let currentLat = 29.7604; // Houston
-let currentLng = -95.3698;
+app.use('/api/auth', authRoutes); // 👈 new route
 
-// Slightly move coordinates every few seconds
+// 🔥 Mock fleet of ambulances
+let ambulances = [
+  {
+    id: 'Ambulance-1',
+    latitude: 29.7604,
+    longitude: -95.3698,
+    "status": "Clear"
+  },
+  {
+    id: 'Ambulance-2',
+    latitude: 29.7704,
+    longitude: -95.3598,
+    "status": "Clear"
+  },
+  {
+    id: 'Ambulance-3',
+    latitude: 29.7504,
+    longitude: -95.3798,
+    "status": "Clear"
+  },
+  {
+    id: 'Ambulance-4',
+    latitude: 29.7554,
+    longitude: -95.3658,
+    "status": "Clear"
+  },
+  {
+    id: 'Ambulance-5',
+    latitude: 29.7654,
+    longitude: -95.3758,
+    "status": "Clear"
+  }
+];
+
+// 🔄 Update ambulance positions slightly every 5 seconds
 setInterval(() => {
-  currentLat += (Math.random() - 0.5) * 0.001;
-  currentLng += (Math.random() - 0.5) * 0.001;
+  ambulances.forEach(ambulance => {
+    ambulance.latitude += (Math.random() - 0.5) * 0.001;
+    ambulance.longitude += (Math.random() - 0.5) * 0.001;
+  });
 }, 5000);
 
-// API endpoint to get live location
-app.get('/api/location', (req, res) => {
-  res.json({
-    latitude: currentLat,
-    longitude: currentLng,
-  });
+// 📡 GET endpoint to return all ambulances
+app.get('/api/ambulances', (req, res) => {
+  res.json(ambulances);
 });
 
-// Store and retrieve latest posted location
-let latestLocation = null; 
+app.patch('/api/ambulances/:id', (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
 
-app.post('/api/location', (req, res) => {
-  console.log('Received location:', req.body);
-  latestLocation = req.body;
-  res.status(200).send('Location received');
-});
+  const ambulance = ambulances.find(a => a.id === id);
 
-app.get('/api/latest-location', (req, res) => {
-  if (!latestLocation) {
-    return res.status(404).json({ error: 'No location data available' });
+  if (ambulance) {
+    ambulance.status = status;
+    res.json({ message: 'Status updated successfully.' });
+  } else {
+    res.status(404).json({ message: 'Ambulance not found.' });
   }
-  res.status(200).json(latestLocation);
 });
 
-// Start the server
+// ✅ Protected route example
+app.get('/api/admin-data', authenticateToken, authorizeRole('admin'), (req, res) => {
+  res.json({ message: 'Welcome Admin! Here is your secret data.' });
+});
+
+// ✅ Another example for dispatchers
+app.get('/api/dispatcher-data', authenticateToken, authorizeRole('dispatcher'), (req, res) => {
+  res.json({ message: 'Welcome Dispatcher! Here is your schedule.' });
+});
+
+// 🖥️ Server start
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });
