@@ -58,7 +58,7 @@ const DebugToken = () => {
 </button>
 
 <button
-  className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+  className="bg-green-600 mr-2  text-white px-4 py-2 rounded hover:bg-green-700"
   onClick={() => {
     const encoded =
       btoa(JSON.stringify({ alg: "HS256", typ: "JWT" })) +
@@ -72,6 +72,14 @@ const DebugToken = () => {
 >
   Set EMT Token
 </button>
+
+<button 
+  className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+  onClick={() => {
+  localStorage.removeItem("token");
+  window.location.reload();
+}}>Clear Token</button>
+
 
 
     </div>

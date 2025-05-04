@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int        @id @default(autoincrement())
+  name       String
+  email      String     @unique
+  role       Role
+  station    String    
+  active     Boolean    @default(true)
+  shiftStart DateTime?
+  shiftEnd   DateTime?
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  schedules  Schedule[]
+}
+
+model Schedule {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  date      DateTime
+  start     DateTime
+  end       DateTime
+  notes     String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+enum Role {
+  EMT
+  DISPATCHER
+  ADMIN
+}

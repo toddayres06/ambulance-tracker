@@ -1,11 +1,11 @@
 // /controllers/authController.js
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const { createUser, findUserByEmail } = require('../models/User');
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+import { createUser, findUserByEmail } from '../models/User.js';
 
-const JWT_SECRET = 'your_jwt_secret_key'; // 🔥 (we'll upgrade this later with env variables)
+const JWT_SECRET = 'your_jwt_secret_key';
 
-const signup = async (req, res) => {
+export const signup = async (req, res) => {
   const { email, password, role } = req.body;
 
   if (!email || !password) {
@@ -21,7 +21,7 @@ const signup = async (req, res) => {
   res.status(201).json({ message: 'User created successfully', user: { id: user.id, email: user.email, role: user.role } });
 };
 
-const login = async (req, res) => {
+export const login = async (req, res) => {
   const { email, password } = req.body;
 
   const user = findUserByEmail(email);
@@ -39,9 +39,4 @@ const login = async (req, res) => {
   console.log('Logged in user role:', user.role);
 
   res.json({ token });
-};
-
-module.exports = {
-  signup,
-  login
 };

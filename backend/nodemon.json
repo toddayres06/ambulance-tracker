@@ -1,0 +1,6 @@
+{
+    "watch": ["index.js"],
+    "ext": "js,mjs,json",
+    "exec": "node --experimental-specifier-resolution=node index.js"
+  }
+  

@@ -1,3 +1,7 @@
+// Mackship10!@
+// postgre - postgresql://postgres:[YOUR-PASSWORD]@db.lmuxngwcygjqrqdjmfgf.supabase.co:5432/postgres
+
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
@@ -7,6 +11,7 @@ import 'leaflet/dist/leaflet.css';
 import { ROLES } from './constants/roles'
 
 import { Toaster } from 'react-hot-toast'
+import Contacts from './components/Contacts'
 import DebugToken from './components/DebugToken'
 import Layout from './Layout.jsx';
 import Dashboard from './pages/Dashboard.jsx';
@@ -35,6 +40,7 @@ const router = createBrowserRouter([
       { path: 'map-overview', element: <MapOverview /> },
       { path: 'track', element: <UnitTracker /> },
       { path: 'dispatcher', element: <Dispatcher /> },
+      { path: 'contacts', element: <Contacts /> },
       { path: 'login', element: <LoginForm /> },
       { 
         element: <PrivateRoute requiredRole={ROLES.ADMIN} />,
