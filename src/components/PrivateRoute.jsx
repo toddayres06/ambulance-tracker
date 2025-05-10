@@ -1,23 +1,28 @@
-// /components/PrivateRoute.jsx
 import { Navigate, Outlet } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
+import { useAuth } from '../context/AuthContext';
 
-const PrivateRoute = ({ requiredRole }) => {
-  const token = localStorage.getItem('token');
+const PrivateRoute = ({ allowedRoles, children }) => {
+  const { user } = useAuth();  // Get user from context
 
-  if (!token) {
-    return <Navigate to="/login" replace />;
+  console.log('User role in PrivateRoute:', user?.role);  // Log the user role
+  console.log('Allowed roles:', allowedRoles);  // Log the allowed roles
+
+  if (user === null) {
+    // We don't know the user yet (still loading from token)
+    return <div>Loading...</div>;
+  }
+  
+  if (!user) {
+    console.log('No user, redirecting to login');  // Log if user is not authenticated
+    return <Navigate to="/login" />;  // Redirect to login if no user
   }
 
-  try {
-    const decoded = jwtDecode(token);
-    if (requiredRole && decoded.role !== requiredRole) {
-      return <Navigate to="/unauthorized" replace />;
-    }
-    return <Outlet />; // Proceed to protected route
-  } catch (err) {
-    return <Navigate to="/login" replace />;
+  if (!allowedRoles.includes(user.role)) {
+    console.log('Role not allowed, redirecting to unauthorized page');  // Log if role is not allowed
+    return <Navigate to="/unauthorized" />;  // Redirect if user role is not allowed
   }
+
+  return <Outlet />  // If authenticated and authorized, render children (protected content)
 };
 
 export default PrivateRoute;

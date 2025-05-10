@@ -12,19 +12,22 @@ export const signup = async (req, res) => {
     return res.status(400).json({ message: 'Email and password required.' });
   }
 
-  const existingUser = findUserByEmail(email);
+  const existingUser = await findUserByEmail(email);
   if (existingUser) {
     return res.status(400).json({ message: 'User already exists.' });
   }
 
   const user = await createUser(email, password, role);
-  res.status(201).json({ message: 'User created successfully', user: { id: user.id, email: user.email, role: user.role } });
+  res.status(201).json({
+    message: 'User created successfully',
+    user: { id: user.id, email: user.email, role: user.role }
+  });
 };
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
-  const user = findUserByEmail(email);
+  const user = await findUserByEmail(email); // <-- FIXED HERE
   if (!user) {
     return res.status(400).json({ message: 'Invalid credentials.' });
   }
@@ -34,7 +37,11 @@ export const login = async (req, res) => {
     return res.status(400).json({ message: 'Invalid credentials.' });
   }
 
-  const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '1h' });
+  const token = jwt.sign(
+    { id: user.id, email: user.email, role: user.role },
+    JWT_SECRET,
+    { expiresIn: '1h' }
+  );
 
   console.log('Logged in user role:', user.role);
 

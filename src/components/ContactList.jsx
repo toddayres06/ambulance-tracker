@@ -1,24 +1,12 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-
+// src/components/ContactList.jsx
 const roleColors = {
-  EMT: 'bg-blue-100 text-blue-800',
-  DISPATCHER: 'bg-yellow=1- text-yellow-800',
-  ADMIN: 'bg-purple-100 text-purple-800'
-}
-
-const Contacts = () => {
-  const [contacts, setContacts] = useState([]);
-
-  useEffect(() => {
-    axios.get('/api/contacts')
-      .then((res) => setContacts(res.data))
-      .catch((err) => console.error('Failed to fetch contacts', err));
-  }, []);
-
-  return (
-    <div className="p-6">
-      <h1 className="text-2xl font-semibold mb-4 text-gray-800">Contacts</h1>
+    EMT: 'bg-blue-100 text-blue-800',
+    DISPATCHER: 'bg-yellow-100 text-yellow-800',
+    ADMIN: 'bg-purple-100 text-purple-800',
+  };
+  
+  const ContactList = ({ contacts }) => {
+    return (
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white shadow-md rounded-xl">
           <thead className="bg-gray-100 text-gray-700 text-left">
@@ -41,6 +29,8 @@ const Contacts = () => {
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${roleColors[c.role] || 'bg-gray-100 text-gray-800'}`}>
                     {c.role}
                   </span>
+                </td>
+                <td className="py-3 px-4">
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${c.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                     {c.active ? 'Active' : 'Inactive'}
                   </span>
@@ -54,8 +44,8 @@ const Contacts = () => {
           </tbody>
         </table>
       </div>
-    </div>
-  );
-};
-
-export default Contacts;
+    );
+  };
+  
+  export default ContactList;
+  

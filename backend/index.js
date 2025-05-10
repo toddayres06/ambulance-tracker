@@ -2,9 +2,14 @@
 import cors from 'cors';
 import express from 'express';
 import authRoutes from './routes/authRoutes.js';
+import shiftTypeRoutes from './routes/shiftTypeRoutes.js';
+import shiftAssignmentRoutes from './routes/shiftAssignmentRoutes.js'
+import contactRoutes from './routes/contactRoutes'
 import prisma from './lib/prismaClient.js';
 import { authenticateToken } from './middleware/authMiddleware.js';
 import { authorizeRole } from './middleware/roleMiddleware.js';
+import { seedAdminUser } from './models/User.js';
+
 
 const app = express();
 const PORT = 3001;
@@ -12,7 +17,10 @@ const PORT = 3001;
 app.use(cors());
 app.use(express.json());
 
+app.use('/api/shift-types', shiftTypeRoutes)
 app.use('/api/auth', authRoutes); // 👈 auth routes
+app.use('/api', contactRoutes)
+app.use('/api/shift-assignments', shiftAssignmentRoutes);
 
 // 🔥 Mock fleet of ambulances
 let ambulances = [
@@ -66,19 +74,7 @@ app.get('/api/dispatcher-data', authenticateToken, authorizeRole('dispatcher'), 
   res.json({ message: 'Welcome Dispatcher! Here is your schedule.' });
 });
 
-// 👇 NEW: Endpoint to fetch all contacts
-app.get('/api/contacts', async (req, res) => {
-  try {
-    console.log('Fetching contacts...'); // 🔍 Add this
-    const contacts = await prisma.user.findMany(); // 👈 Confirm this matches your schema
-    console.log('Contacts fetched:', contacts); // 🔍 Add this
-    res.json(contacts);
-  } catch (err) {
-    console.error('Error in /api/contacts:', err); // 🔍 Make sure you see the exact error
-    res.status(500).json({ message: 'Failed to fetch contacts' });
-  }
-});
-
+await seedAdminUser();
 
 // 🖥️ Start server
 app.listen(PORT, () => {

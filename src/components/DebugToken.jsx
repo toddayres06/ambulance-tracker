@@ -17,6 +17,12 @@ const DebugToken = () => {
     role: "emt",
     exp: Math.floor(Date.now() / 1000) + 60 * 60,
   };
+
+  const fakeDispatcherToken = {
+    email: "dispatcher@example.com",
+    role: "dispatcher",
+    exp: Math.floor(Date.now() / 1000) + 60 *60
+  }
   
 
   useEffect(() => {
@@ -55,6 +61,22 @@ const DebugToken = () => {
   }}
 >
   Set Admin Token
+</button>
+
+<button
+  className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 mr-2"
+  onClick={() => {
+    const encoded =
+      btoa(JSON.stringify({ alg: "HS256", typ: "JWT" })) +
+      "." +
+      btoa(JSON.stringify(fakeDispatcherToken)) +
+      "." +
+      "fake-signature";
+    localStorage.setItem("token", encoded);
+    window.location.reload();
+  }}
+>
+  Set Dispatcher Token
 </button>
 
 <button

@@ -1,15 +1,46 @@
-// /models/User.js
 import bcrypt from 'bcryptjs';
+import prisma from '../lib/prismaClient.js';
 
-let users = []; // In-memory user store
+// Seed the admin user if not already present
+export async function seedAdminUser() {
+  const existingUser = await prisma.user.findUnique({
+    where: { email: 'admin@example.com' },
+  });
 
-export const createUser = async (email, password, role = 'dispatcher') => {
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const newUser = { id: Date.now().toString(), email, password: hashedPassword, role };
-  users.push(newUser);
-  return newUser;
-};
+  if (!existingUser) {
+    const hashedPassword = await bcrypt.hash('securePassword123', 10);
 
-export const findUserByEmail = (email) => {
-  return users.find(user => user.email === email);
-};
+    await prisma.user.create({
+      data: {
+        name: 'Admin',
+        email: 'admin@example.com',
+        password: hashedPassword,
+        role: 'ADMIN',
+        station: 'Station 1', // ✅ Add this line
+      },
+    });
+
+    console.log('Seeded admin user');
+  } else {
+    console.log('Admin user already exists');
+  }
+}
+
+// Create a new user (used during registration, etc.)
+export async function createUser({ name, email, password, role }) {
+  return prisma.user.create({
+    data: {
+      name,
+      email,
+      password,
+      role,
+    },
+  });
+}
+
+// Find a user by email (used during login)
+export async function findUserByEmail(email) {
+  return prisma.user.findUnique({
+    where: { email },
+  });
+}
