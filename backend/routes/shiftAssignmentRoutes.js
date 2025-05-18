@@ -1,3 +1,5 @@
+// /backend/routes/shiftAssignmentRoutes.js
+
 import express from 'express';
 import {
   createShiftAssignment,
@@ -6,18 +8,42 @@ import {
   deleteShiftAssignment,
 } from '../controllers/shiftAssignmentController.js';
 
+// Import our auth middleware
+import { authenticateToken } from '../middleware/authMiddleware.js';
+import { authorizeRole } from '../middleware/roleMiddleware.js';
+
 const router = express.Router();
 
-// Create a shift assignment
-router.post('/', createShiftAssignment);
+// --- All routes require a valid JWT ---
+router.use(authenticateToken);
 
-// Get all shift assignments
-router.get('/', getShiftAssignments);
+// --- ADMIN ONLY: create a new shift assignment ---
+router.post(
+  '/',
+  authorizeRole('admin'),
+  createShiftAssignment
+);
 
-// Update a shift assignment
-router.put('/:id', updateShiftAssignment);
+// --- ADMIN ONLY: update an existing shift assignment ---
+router.put(
+  '/:id',
+  authorizeRole('admin'),
+  updateShiftAssignment
+);
 
-// Delete a shift assignment
-router.delete('/:id', deleteShiftAssignment);
+// --- ADMIN ONLY: delete a shift assignment ---
+router.delete(
+  '/:id',
+  authorizeRole('admin'),
+  deleteShiftAssignment
+);
+
+// --- ALL AUTHENTICATED USERS: get assignments ---
+// In the controller, we'll check `req.user.role`
+// and filter accordingly (admins see all; others see only theirs)
+router.get(
+  '/',
+  getShiftAssignments
+);
 
 export default router;

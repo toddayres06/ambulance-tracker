@@ -7,7 +7,7 @@ export default function LoginForm() {
   const navigate = useNavigate();
 
   const [credentials, setCredentials] = useState({
-    username: "",
+    email: "",
     password: ""
   });
   const [error, setError] = useState("");
@@ -23,7 +23,7 @@ export default function LoginForm() {
     e.preventDefault();
     setError("");
     try {
-      await login(credentials.username, credentials.password);
+      await login(credentials.email, credentials.password);
       navigate("/");
     } catch (err) {
       setError("Invalid username or password.");
@@ -51,8 +51,8 @@ export default function LoginForm() {
             <input
               type="text"
               id="username"
-              name="username"
-              value={credentials.username}
+              name="email"
+              value={credentials.email}
               onChange={handleChange}
               required
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"

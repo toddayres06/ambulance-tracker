@@ -1,65 +1,171 @@
-// File: src/pages/ShiftAssignments.jsx
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
+import EditShiftModal from '../components/EditShiftModal';
 
-import React, { useState, useEffect } from 'react'
-import EditShiftModal from '../components/EditShiftModal'
+const ShiftAssignments = () => {
+  const { token, user } = useAuth();
+    console.log("Token in ShiftAssignments:", token);  // <-- Add it right here
 
-export default function ShiftAssignments() {
-  const [shifts, setShifts] = useState([])
-  const [editingShift, setEditingShift] = useState(null)
+  const [shifts, setShifts] = useState([]);
+  const [shiftTypes, setShiftTypes] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [editingShift, setEditingShift] = useState(null);
+  const [newAssign, setNewAssign] = useState({ userId: '', shiftTypeId: '', date: '' });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Example fetch - customize as needed
+  const headers = { Authorization: `Bearer ${token}` };
+
+  // Fetch assignments, types, and users
   useEffect(() => {
-    const fetchShifts = async () => {
+    if (!token) return 
+    const fetchData = async () => {
       try {
-        const res = await fetch('http://localhost:3001/api/shift-assignments');
-        const data = await res.json();
-        console.log('Fetched shift data:', data);
-        setShifts(data);
+        setLoading(true);
+        setError(null);
+
+        const [assignRes, typesRes, usersRes] = await Promise.all([
+          axios.get('/shift-assignments', { headers }),
+          axios.get('/shift-types', { headers }),
+          axios.get('/users', { headers })
+        ]);
+
+        setShifts(assignRes.data);
+        setShiftTypes(typesRes.data);
+        // Filter out admin users
+        setUsers(usersRes.data.filter(u => u.role !== 'admin'));
       } catch (err) {
-        console.error('Error fetching shifts:', err);
+        console.error(err);
+        setError('Failed to load data');
+      } finally {
+        setLoading(false);
       }
     };
-  
-    fetchShifts()
-  }, [])
+    fetchData();
+  }, [token]);
 
-  const handleSave = async (updatedShift) => {
-    await fetch(`/api/shift-assignments/${updatedShift.id}`, {
-      method: 'PUT',
-      body: JSON.stringify({
-        date: updatedShift.date,
-        userId: updatedShift.userId,
-        shiftTypeId: updatedShift.shiftTypeId,
-      }),
-      headers: { 'Content-Type': 'application/json' },
-    })
+  // Create new assignment
+  const handleCreate = async e => {
+    e.preventDefault();
+    try {
+      console.log('Attempting to create assignment with data:', newAssign); // 🔍 Add this line
+      const res = await axios.post(
+        '/shift-assignments',
+        newAssign,
+        { headers }
+      );
+      setShifts(prev => [...prev, res.data]);
+      setNewAssign({ userId: '', shiftTypeId: '', date: '' });
+    } catch (err) {
+      console.error(err);
+      setError('Assignment failed');
+    }
+  };
 
-    // Update local state
-    setShifts((prev) =>
-      prev.map((s) => (s.id === updatedShift.id ? updatedShift : s))
-    )
-    setEditingShift(null)
-  }
+  // Update assignment
+  const handleSave = async updated => {
+    try {
+      const res = await axios.put(
+        `/shift-assignments/${updated.id}`,
+        updated,
+        { headers }
+      );
+      setShifts(prev => prev.map(s => s.id === updated.id ? res.data : s));
+      setEditingShift(null);
+    } catch (err) {
+      console.error(err);
+      setError('Update failed');
+    }
+  };
+
+  // Delete assignment
+  const handleDelete = async id => {
+    if (!window.confirm('Delete this assignment?')) return;
+    try {
+      await axios.delete(`/shift-assignments/${id}`, { headers });
+      setShifts(prev => prev.filter(s => s.id !== id));
+    } catch (err) {
+      console.error(err);
+      setError('Delete failed');
+    }
+  };
+
+  if (loading) return <div className="p-6 text-center">Loading schedules...</div>;
+  if (error) return <div className="p-6 text-red-600">Error: {error}</div>;
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Shift Assignments</h1>
+    <div className="p-6 max-w-4xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Assign Weekly Schedules</h1>
 
+      {/* New assignment form */}
+      <form onSubmit={handleCreate} className="mb-6 grid grid-cols-1 sm:grid-cols-4 gap-4">
+        <select
+          required
+          value={newAssign.userId}
+          onChange={e => setNewAssign({ ...newAssign, userId: parseInt(e.target.value) })}
+          className="border rounded p-2"
+        >
+          <option value="">Select Employee</option>
+          {users.map(u => (
+            <option key={u.id} value={u.id}>
+              {u.name} — {u.role.charAt(0).toUpperCase() + u.role.slice(1)} @ {u.station}
+            </option>
+          ))}
+        </select>
 
-      <pre>{JSON.stringify(shifts, null, 2)}</pre>
-      {shifts.map((shift) => (
-        <div key={shift.id} className="p-4 border rounded mb-3">
-          <div className="mb-2">
-            <strong>Date:</strong> {new Date(shift.date).toLocaleString()}
+        <select
+          required
+          value={newAssign.shiftTypeId}
+          onChange={e => setNewAssign({ ...newAssign, shiftTypeId: parseInt(e.target.value) })}
+          className="border rounded p-2"
+        >
+          <option value="">Select Shift</option>
+          {shiftTypes.map(t => (
+            <option key={t.id} value={t.id}>
+              {t.name} ({t.startTime}–{t.endTime})
+            </option>
+          ))}
+        </select>
+
+        <input
+          type="date"
+          required
+          value={newAssign.date}
+          onChange={e => setNewAssign({ ...newAssign, date: e.target.value })}
+          className="border rounded p-2"
+        />
+
+        <button
+          type="submit"
+          className="bg-green-500 text-white rounded px-4 py-2 disabled:opacity-50"
+          disabled={!newAssign.userId || !newAssign.shiftTypeId || !newAssign.date}
+        >
+          Assign
+        </button>
+      </form>
+
+      {/* Assignment list */}
+      <div className="space-y-4">
+        {shifts.map(shift => (
+          <div key={shift.id} className="flex justify-between items-center border p-4 rounded">
+            <div>
+              <div>
+                <strong>{shift.user?.name || 'Unknown User'}</strong>
+              </div>
+              <div>
+                {shift.shiftType?.name || 'Unknown Shift'}
+              </div>
+              <div>{new Date(shift.date).toLocaleDateString()}</div>
+            </div>
+            <div className="space-x-3">
+              <button onClick={() => setEditingShift(shift)} className="text-blue-600">Edit</button>
+              <button onClick={() => handleDelete(shift.id)} className="text-red-600">Delete</button>
+            </div>
           </div>
-          <button
-            onClick={() => setEditingShift(shift)}
-            className="text-blue-600 hover:underline"
-          >
-            Edit
-          </button>
-        </div>
-      ))}
+
+        ))}
+      </div>
 
       {editingShift && (
         <EditShiftModal
@@ -69,5 +175,7 @@ export default function ShiftAssignments() {
         />
       )}
     </div>
-  )
-}
+  );
+};
+
+export default ShiftAssignments;

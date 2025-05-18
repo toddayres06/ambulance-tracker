@@ -7,57 +7,55 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id         Int        @id @default(autoincrement())
-  name       String
-  email      String     @unique
-  password   String?    
-  role       Role
-  station    String    
-  active     Boolean    @default(true)
-  shiftStart DateTime?
-  shiftEnd   DateTime?
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  schedules  Schedule[]
+enum Role {
+  admin
+  dispatcher
+  emt
+}
 
+
+model User {
+  id               Int               @id @default(autoincrement())
+  name             String
+  email            String            @unique
+  password         String? // Consider hashing on creation
+  role             Role
+  station          String
+  active           Boolean           @default(true)
+  shiftStart       DateTime? // Maybe later move to Schedule logic only
+  shiftEnd         DateTime?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  schedules        Schedule[]
   shiftAssignments ShiftAssignment[]
 }
 
 model Schedule {
   id        Int      @id @default(autoincrement())
   userId    Int
+  user      User     @relation(fields: [userId], references: [id])
   date      DateTime
   start     DateTime
   end       DateTime
   notes     String?
   createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
-}
-
-enum Role {
-  EMT
-  DISPATCHER
-  ADMIN
 }
 
 model ShiftAssignment {
-  id        Int       @id @default(autoincrement())
-  date      DateTime
-  user      User      @relation(fields: [userId], references: [id])
-  userId    Int
-  shiftType ShiftType @relation(fields: [shiftTypeId], references: [id])
+  id          Int       @id @default(autoincrement())
+  date        DateTime
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
   shiftTypeId Int
-  createdAt DateTime  @default(now())
+  shiftType   ShiftType @relation(fields: [shiftTypeId], references: [id])
+  createdAt   DateTime  @default(now())
 }
 
 model ShiftType {
-  id        Int      @id @default(autoincrement())
-  name      String
-  startTime String   // Store in HH:MM format
-  endTime   String   // Store in HH:MM format
-  createdAt DateTime @default(now())
-
+  id               Int               @id @default(autoincrement())
+  name             String
+  startTime        String // HH:MM format; could change to `DateTime` in future
+  endTime          String
+  createdAt        DateTime          @default(now())
   shiftAssignments ShiftAssignment[]
 }
-

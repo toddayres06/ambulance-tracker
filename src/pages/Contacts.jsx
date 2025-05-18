@@ -8,7 +8,7 @@ const Contacts = () => {
   const [showCreate, setShowCreate] = useState(false);
 
   useEffect(() => {
-    axios.get('/api/contacts')
+    axios.get('/contacts')
       .then((res) => setContacts(res.data))
       .catch((err) => console.error('Failed to fetch contacts', err));
   }, []);

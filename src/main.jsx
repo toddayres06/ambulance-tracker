@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import './index.css';
 import 'leaflet/dist/leaflet.css';
+import axios from 'axios'
+axios.defaults.baseURL = '/api'
 
 import { AuthProvider } from './context/AuthContext';
 import { ROLES } from './constants/roles';
@@ -20,6 +22,8 @@ import Dispatcher from './pages/Dispatcher.jsx';
 import LoginForm from './pages/LoginForm';
 import DispatcherDashboard from './pages/DispatcherDashboard';
 import AdminDashboard from './pages/AdminDashboard';
+import Schedule from './pages/Schedule'
+import ShiftAssignments from './pages/ShiftAssignments'
 import EMTDashboard from './pages/EMTDashboard';
 import PrivateRoute from './components/PrivateRoute';
 import NotFound from './pages/NotFound.jsx';
@@ -43,6 +47,7 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <AdminDashboard /> },
           { path: 'dashboard', element: <AdminDashboard /> },
+          { path: 'weekly-schedules', element: <ShiftAssignments />},
           { path: 'shift-templates', element: <ShiftTypes /> },
           { path: 'contacts', element: <Contacts /> },
           { path: 'map-overview', element: <MapOverview /> },
@@ -56,6 +61,7 @@ const router = createBrowserRouter([
         element: <PrivateRoute allowedRoles={[ROLES.EMT]} />,
         children: [
           { index: true, element: <EMTDashboard /> }, // ← this is /emt
+          { path: 'schedule', element: <Schedule /> }, // <-Schedule
         ],
       },
 

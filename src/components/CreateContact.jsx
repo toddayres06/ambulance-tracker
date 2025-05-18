@@ -4,7 +4,8 @@ const CreateContact = ({ isOpen, onClose, onCreate }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    role: 'EMT',
+    password: '',
+    role: 'emt',
     station: '',
     active: true,
   });
@@ -21,7 +22,7 @@ const CreateContact = ({ isOpen, onClose, onCreate }) => {
     e.preventDefault();
     onCreate(formData); // this will call the parent’s handler
     onClose(); // close the panel after creating
-    setFormData({ name: '', email: '', role: 'EMT', station: '', active: true });
+    setFormData({ name: '', email: '', password: '', role: 'EMT', station: '', active: true });
   };
 
   return (
@@ -34,11 +35,21 @@ const CreateContact = ({ isOpen, onClose, onCreate }) => {
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Name" className="w-full border rounded p-2" required />
           <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Email" className="w-full border rounded p-2" required />
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Initial Password"
+            className="w-full border rounded p-2"
+            required
+          />
+
           <input type="text" name="station" value={formData.station} onChange={handleChange} placeholder="Station" className="w-full border rounded p-2" required />
           <select name="role" value={formData.role} onChange={handleChange} className="w-full border rounded p-2">
-            <option value="EMT">EMT</option>
-            <option value="DISPATCHER">Dispatcher</option>
-            <option value="ADMIN">Admin</option>
+            <option value="emt">EMT</option>
+            <option value="dispatcher">Dispatcher</option>
+            <option value="admin">Admin</option>
           </select>
           <label className="flex items-center space-x-2">
             <input type="checkbox" name="active" checked={formData.active} onChange={handleChange} />

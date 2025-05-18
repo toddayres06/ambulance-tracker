@@ -1,3 +1,5 @@
+// /backend/controllers/shiftAssignmentController.js
+
 import prisma from '../lib/prismaClient.js';
 
 // Create a new Shift Assignment
@@ -5,11 +7,17 @@ export const createShiftAssignment = async (req, res) => {
   try {
     const { userId, shiftTypeId, date } = req.body;
 
+    // Convert incoming date string (YYYY‑MM‑DD) into a JS Date
+    const dateObj = new Date(date);
+    if (isNaN(dateObj.getTime())) {
+      return res.status(400).json({ error: 'Invalid date format' });
+    }
+
     const newShiftAssignment = await prisma.shiftAssignment.create({
       data: {
         userId,
         shiftTypeId,
-        date,
+        date: dateObj,
       },
     });
 
@@ -20,10 +28,20 @@ export const createShiftAssignment = async (req, res) => {
   }
 };
 
-// Get all Shift Assignments
+// Get Shift Assignments
+// - Admins see all assignments
+// - Other users see only their own
 export const getShiftAssignments = async (req, res) => {
+  console.log('🔥 req.user:', req.user);
   try {
+    const { role, id: userId } = req.user;
+
+    const whereClause = role === 'admin'
+      ? {}
+      : { userId };
+
     const shiftAssignments = await prisma.shiftAssignment.findMany({
+      where: whereClause,
       include: {
         user: true,
         shiftType: true,
@@ -44,11 +62,11 @@ export const updateShiftAssignment = async (req, res) => {
     const { userId, shiftTypeId, date } = req.body;
 
     const updatedShiftAssignment = await prisma.shiftAssignment.update({
-      where: { id: parseInt(id) },
+      where: { id: parseInt(id, 10) },
       data: {
         userId,
         shiftTypeId,
-        date,
+        date: new Date(date),
       },
     });
 
@@ -65,7 +83,7 @@ export const deleteShiftAssignment = async (req, res) => {
     const { id } = req.params;
 
     await prisma.shiftAssignment.delete({
-      where: { id: parseInt(id) },
+      where: { id: parseInt(id, 10) },
     });
 
     res.status(204).send();

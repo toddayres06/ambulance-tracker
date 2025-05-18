@@ -17,19 +17,19 @@ const ShiftTypeManager = () => {
   }, []);
 
   const fetchShiftTypes = async () => {
-    const res = await axios.get('/api/shift-types');
+    const res = await axios.get('/shift-types');
     setShiftTypes(res.data);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post('/api/shift-types', form);
+    await axios.post('/shift-types', form);
     setForm({ name: '', startTime: '', endTime: '' });
     fetchShiftTypes();
   };
 
   const handleDelete = async (id) => {
-    await axios.delete(`/api/shift-types/${id}`);
+    await axios.delete(`/shift-types/${id}`);
     fetchShiftTypes();
   };
 

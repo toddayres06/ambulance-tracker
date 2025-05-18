@@ -15,7 +15,7 @@ export async function seedAdminUser() {
         name: 'Admin',
         email: 'admin@example.com',
         password: hashedPassword,
-        role: 'ADMIN',
+        role: 'admin',
         station: 'Station 1', // ✅ Add this line
       },
     });

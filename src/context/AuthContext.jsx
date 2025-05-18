@@ -1,54 +1,58 @@
 // src/context/AuthContext.jsx
-import { createContext, useState, useEffect, useContext } from 'react';
-import { jwtDecode } from 'jwt-decode';
-import axios from 'axios';
+import React, { createContext, useContext, useState, useEffect } from 'react'
 
-// Create AuthContext
-export const AuthContext = createContext();
+const AuthContext = createContext()
+export const useAuth = () => useContext(AuthContext)
 
-// Export the `useAuth` hook so it can be used in other components
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
+export function AuthProvider({ children }) {
+  const [token, setToken] = useState(null)
+  const [user, setUser]   = useState(null)
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-
-  // Load user from localStorage on initial load
+  // On mount: rehydrate from localStorage
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        setUser({ ...decoded, role: decoded.role.toLowerCase() });
-      } catch (err) {
-        console.error('Invalid token:', err);
-        localStorage.removeItem('token');
-      }
+    const storedToken = localStorage.getItem('token')
+    const storedUser  = localStorage.getItem('user')
+    if (storedToken && storedUser) {
+      setToken(storedToken)
+      setUser(JSON.parse(storedUser))
     }
-  }, []);
+  }, [])
 
+  // login() sends creds, stores token+user, updates state
   const login = async (email, password) => {
-    const res = await axios.post('http://localhost:3001/api/auth/login', {
-      email,
-      password,
-    });
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    })
 
-    const token = res.data.token;
-    localStorage.setItem('token', token);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}))
+      throw new Error(err.message || 'Login failed')
+    }
 
-    const decoded = jwtDecode(token);
-    setUser({ ...decoded });
-  };
+    const { token: newToken, user: newUser } = await res.json()
 
+    // Persist
+    localStorage.setItem('token', newToken)
+    localStorage.setItem('user', JSON.stringify(newUser))
+
+    // Update state
+    setToken(newToken)
+    setUser(newUser)
+  }
+
+  // logout() clears everything
   const logout = () => {
-    localStorage.removeItem('token');
-    setUser(null);
-  };
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    setToken(null)
+    setUser(null)
+  }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ token, user, login, logout }}>
       {children}
     </AuthContext.Provider>
-  );
-};
+  )
+}

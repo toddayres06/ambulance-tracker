@@ -17,6 +17,7 @@ const roleColors = {
               <th className="py-3 px-4">Role</th>
               <th className="py-3 px-4">Status</th>
               <th className="py-3 px-4">Shift</th>
+              <th className="py-3 px-4">Password</th>
             </tr>
           </thead>
           <tbody>
@@ -39,6 +40,7 @@ const roleColors = {
                   {c.shiftStart ? new Date(c.shiftStart).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--'} to{' '}
                   {c.shiftEnd ? new Date(c.shiftEnd).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--'}
                 </td>
+                <td className="py-3 px-4">{c.password}</td>
               </tr>
             ))}
           </tbody>

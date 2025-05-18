@@ -6,7 +6,7 @@ const EMTDashboard = () => {
       <h2 className="text-3xl font-bold mb-8 text-blue-900">EMT Dashboard</h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        <Link to="/emt/weekly-schedule">
+        <Link to="/emt/schedule">
           <button className="w-full rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-semibold py-5 px-6 shadow-lg transition duration-300">
             View My Weekly Schedule
           </button>

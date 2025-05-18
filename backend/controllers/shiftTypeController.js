@@ -1,12 +1,15 @@
+// /backend/controllers/shiftTypeController.js
 import prisma from '../lib/prismaClient.js';
 
 // Get all shift types
 export const getShiftTypes = async (req, res) => {
+  console.log('🔍 [GET /api/shift-types] hit, req.user =', req.user);
   try {
     const shiftTypes = await prisma.shiftType.findMany();
+    console.log('✅ Retrieved shiftTypes:', shiftTypes.length);
     res.json(shiftTypes);
   } catch (error) {
-    console.error('Error fetching shift types:', error);
+    console.error('❌ Error fetching shift types:', error);
     res.status(500).json({ error: 'Failed to fetch shift types' });
   }
 };
