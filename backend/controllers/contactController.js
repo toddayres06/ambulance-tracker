@@ -7,9 +7,23 @@ const prisma = new PrismaClient();
 // Fetch all contacts
 export const getContacts = async (req, res) => {
   try {
-    const contacts = await prisma.user.findMany();
-    res.json(contacts);
+    const contacts = await prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        station: true,
+        active: true,
+        shiftStart: true,
+        shiftEnd: true
+        // password is excluded by default here
+      }
+    });
+res.json(contacts);
+
   } catch (err) {
+    console.error('❌ Error in getContacts:', err); // add this line
     res.status(500).json({ error: 'Error fetching contacts' });
   }
 };
@@ -75,11 +89,14 @@ export const updateContact = async (req, res) => {
 // Delete a contact
 export const deleteContact = async (req, res) => {
   const { id } = req.params;
+  console.log(`🗑️ Attempting to delete user with id: ${id}`); // <== Add this
+
 
   try {
     await prisma.user.delete({ where: { id: parseInt(id) } });
     res.status(204).send();
   } catch (err) {
+    console.error('❌ Delete Contact Error:', err); // <== And this
     res.status(500).json({ error: 'Error deleting contact' });
   }
 };

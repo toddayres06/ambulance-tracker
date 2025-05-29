@@ -16,7 +16,7 @@ const Contacts = () => {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-semibold mb-4 text-gray-800">Contacts</h1>
-      <ContactList contacts={contacts} />
+      <ContactList contacts={contacts} setContacts={setContacts} />
         <button
           onClick={() => setShowCreate(true)}
           className="mb-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
@@ -26,8 +26,11 @@ const Contacts = () => {
           isOpen={showCreate}
           onClose={() => setShowCreate(false)}
           onCreate={(newContact) => {
-          axios.post('/api/contacts', newContact)
-            .then(res => setContacts(prev => [...prev, res.data]))
+          axios.post('/contacts', newContact)
+          .then(res => {
+          console.log('🔍 New contact response:', res.data);
+          setContacts(prev => [...prev, res.data.user]);
+          })
             .catch(err => console.error('Create failed', err));
           }}
         />
