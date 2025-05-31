@@ -10,6 +10,9 @@
     "preview": "vite preview",
     "start:backend": "node --experimental-specifier-resolution=node index.js"
   },
+  "prisma": {
+    "seed": "node ./prisma/seed.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

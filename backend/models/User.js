@@ -28,11 +28,13 @@ export async function seedAdminUser() {
 
 // Create a new user (used during registration, etc.)
 export async function createUser({ name, email, password, role }) {
+  const hashedPassword = await bcrypt.hash(password, 10);
+
   return prisma.user.create({
     data: {
       name,
       email,
-      password,
+      password: hashedPassword,
       role,
     },
   });
