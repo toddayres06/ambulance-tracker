@@ -8,6 +8,8 @@ const CreateContact = ({ isOpen, onClose, onCreate }) => {
     role: 'emt',
     station: '',
     active: true,
+    shiftStart: null,
+    shiftEnd: null
   });
 
   const handleChange = (e) => {

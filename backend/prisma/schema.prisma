@@ -7,22 +7,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  admin
-  dispatcher
-  emt
-}
-
-
 model User {
   id               Int               @id @default(autoincrement())
   name             String
   email            String            @unique
-  password         String? // Consider hashing on creation
+  password         String?
   role             Role
   station          String
   active           Boolean           @default(true)
-  shiftStart       DateTime? // Maybe later move to Schedule logic only
+  shiftStart       DateTime?
   shiftEnd         DateTime?
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
@@ -33,29 +26,35 @@ model User {
 model Schedule {
   id        Int      @id @default(autoincrement())
   userId    Int
-  user      User     @relation(fields: [userId], references: [id])
   date      DateTime
   start     DateTime
   end       DateTime
   notes     String?
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model ShiftAssignment {
   id          Int       @id @default(autoincrement())
   date        DateTime
   userId      Int
-  user        User      @relation(fields: [userId], references: [id])
   shiftTypeId Int
-  shiftType   ShiftType @relation(fields: [shiftTypeId], references: [id])
   createdAt   DateTime  @default(now())
+  shiftType   ShiftType @relation(fields: [shiftTypeId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
 }
 
 model ShiftType {
   id               Int               @id @default(autoincrement())
   name             String
-  startTime        String // HH:MM format; could change to `DateTime` in future
+  startTime        String
   endTime          String
   createdAt        DateTime          @default(now())
   shiftAssignments ShiftAssignment[]
+}
+
+enum Role {
+  admin
+  dispatcher
+  emt
 }

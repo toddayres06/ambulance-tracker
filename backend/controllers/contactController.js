@@ -7,23 +7,10 @@ const prisma = new PrismaClient();
 // Fetch all contacts
 export const getContacts = async (req, res) => {
   try {
-    const contacts = await prisma.user.findMany({
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        station: true,
-        active: true,
-        shiftStart: true,
-        shiftEnd: true
-        // password is excluded by default here
-      }
-    });
-res.json(contacts);
-
+    const contacts = await prisma.user.findMany();  // SIMPLIFIED
+    res.json(contacts);
   } catch (err) {
-    console.error('❌ Error in getContacts:', err); // add this line
+    console.error('❌ Error in getContacts:', err);
     res.status(500).json({ error: 'Error fetching contacts' });
   }
 };
@@ -50,7 +37,10 @@ export const createContact = async (req, res) => {
         email,
         role,
         station,
-        password: hashedPassword
+        password: hashedPassword,
+        active: true,
+        shiftStart: null,
+        shiftEnd: null
       }
     });
 
@@ -65,7 +55,7 @@ export const createContact = async (req, res) => {
       }
     });
   } catch (err) {
-    console.error('Create Contact Error:', err);  // <-- Add this line
+    console.error('Create Contact Error:', err);
     res.status(500).json({ error: 'Error creating contact' });
   }
 };
@@ -89,14 +79,13 @@ export const updateContact = async (req, res) => {
 // Delete a contact
 export const deleteContact = async (req, res) => {
   const { id } = req.params;
-  console.log(`🗑️ Attempting to delete user with id: ${id}`); // <== Add this
-
+  console.log(`🗑️ Attempting to delete user with id: ${id}`);
 
   try {
     await prisma.user.delete({ where: { id: parseInt(id) } });
     res.status(204).send();
   } catch (err) {
-    console.error('❌ Delete Contact Error:', err); // <== And this
+    console.error('❌ Delete Contact Error:', err);
     res.status(500).json({ error: 'Error deleting contact' });
   }
 };

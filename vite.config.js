@@ -2,6 +2,7 @@
 import { defineConfig } from 'vite'
 import { visualizer } from 'rollup-plugin-visualizer'
 import react from '@vitejs/plugin-react'
+import path from 'path'
 
 export default defineConfig({
   plugins: [
@@ -13,10 +14,13 @@ export default defineConfig({
       brotliSize: true,
     })
   ],
+  css: {
+    postcss: path.resolve(__dirname, './postcss.config.js'),
+  },
   server: {
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:3001',  // forces IPv4 instead of ::1
+        target: 'http://127.0.0.1:3001',
         changeOrigin: true,
       },
     },

@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import './index.css';
 import 'leaflet/dist/leaflet.css';
 import axios from 'axios'
-axios.defaults.baseURL = '/api'
+axios.defaults.baseURL = `${import.meta.env.VITE_API_URL}/api`;
 
 import { AuthProvider } from './context/AuthContext';
 import { ROLES } from './constants/roles';
