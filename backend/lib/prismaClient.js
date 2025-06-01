@@ -1,9 +1,14 @@
-// backend/lib/prismaClient.js
 import { PrismaClient } from '@prisma/client';
-import dotenv from 'dotenv';
 
-// Load .env from backend folder
-dotenv.config();
+let prisma;
 
-const prisma = new PrismaClient();
+if (process.env.NODE_ENV === 'production') {
+  prisma = new PrismaClient();
+} else {
+  if (!global.prisma) {
+    global.prisma = new PrismaClient();
+  }
+  prisma = global.prisma;
+}
+
 export default prisma;

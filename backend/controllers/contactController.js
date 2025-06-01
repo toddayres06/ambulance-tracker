@@ -1,26 +1,20 @@
-// /controllers/contactController.js
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Role } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
-// Fetch all contacts
-export const getContacts = async (req, res) => {
-  try {
-    const contacts = await prisma.user.findMany();  // SIMPLIFIED
-    res.json(contacts);
-  } catch (err) {
-    console.error('❌ Error in getContacts:', err);
-    res.status(500).json({ error: 'Error fetching contacts' });
-  }
-};
-
-// Create a new contact (with password hashing)
 export const createContact = async (req, res) => {
   const { name, email, role, station, password } = req.body;
 
-  if (!email || !password) {
-    return res.status(400).json({ message: 'Email and password are required.' });
+  console.log('🛑 Incoming contact payload:', req.body);  // KEEP THIS FOR DEBUGGING
+
+  if (!email || !password || !role) {
+    return res.status(400).json({ message: 'Email, role and password are required.' });
+  }
+
+  // Validate role strictly
+  if (!Object.values(Role).includes(role)) {
+    return res.status(400).json({ message: 'Invalid role provided.' });
   }
 
   try {
@@ -57,35 +51,5 @@ export const createContact = async (req, res) => {
   } catch (err) {
     console.error('Create Contact Error:', err);
     res.status(500).json({ error: 'Error creating contact' });
-  }
-};
-
-// Update an existing contact
-export const updateContact = async (req, res) => {
-  const { id } = req.params;
-  const { name, email, station, role, active, shiftStart, shiftEnd } = req.body;
-
-  try {
-    const updatedContact = await prisma.user.update({
-      where: { id: parseInt(id) },
-      data: { name, email, station, role, active, shiftStart, shiftEnd }
-    });
-    res.json(updatedContact);
-  } catch (err) {
-    res.status(500).json({ error: 'Error updating contact' });
-  }
-};
-
-// Delete a contact
-export const deleteContact = async (req, res) => {
-  const { id } = req.params;
-  console.log(`🗑️ Attempting to delete user with id: ${id}`);
-
-  try {
-    await prisma.user.delete({ where: { id: parseInt(id) } });
-    res.status(204).send();
-  } catch (err) {
-    console.error('❌ Delete Contact Error:', err);
-    res.status(500).json({ error: 'Error deleting contact' });
   }
 };
