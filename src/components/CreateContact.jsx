@@ -5,7 +5,7 @@ const CreateContact = ({ isOpen, onClose, onCreate }) => {
     name: '',
     email: '',
     password: '',
-    role: 'emt',
+    role: 'emt',  // ✅ lowercase default
     station: '',
     active: true,
     shiftStart: null,
@@ -22,9 +22,18 @@ const CreateContact = ({ isOpen, onClose, onCreate }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onCreate(formData); // this will call the parent’s handler
-    onClose(); // close the panel after creating
-    setFormData({ name: '', email: '', password: '', role: 'EMT', station: '', active: true });
+    onCreate(formData);
+    onClose();
+    setFormData({
+      name: '',
+      email: '',
+      password: '',
+      role: 'emt',  // ✅ reset default lowercase again after create
+      station: '',
+      active: true,
+      shiftStart: null,
+      shiftEnd: null
+    });
   };
 
   return (
@@ -46,17 +55,19 @@ const CreateContact = ({ isOpen, onClose, onCreate }) => {
             className="w-full border rounded p-2"
             required
           />
-
           <input type="text" name="station" value={formData.station} onChange={handleChange} placeholder="Station" className="w-full border rounded p-2" required />
+          
           <select name="role" value={formData.role} onChange={handleChange} className="w-full border rounded p-2">
             <option value="emt">EMT</option>
             <option value="dispatcher">Dispatcher</option>
             <option value="admin">Admin</option>
           </select>
+
           <label className="flex items-center space-x-2">
             <input type="checkbox" name="active" checked={formData.active} onChange={handleChange} />
             <span>Active</span>
           </label>
+
           <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full">Create</button>
         </form>
       </div>

@@ -20,13 +20,15 @@ export const createContact = async (req, res) => {
 
   const { name, email, role, station, password } = req.body;
 
-  console.log('🛑 Incoming contact payload:', req.body);  // KEEP THIS FOR DEBUGGING
-
   if (!email || !password || !role) {
     return res.status(400).json({ message: 'Email, role and password are required.' });
   }
 
-  if (!Object.values(Role).includes(role)) {
+  // ✅ Normalize role to lowercase
+  const normalizedRole = role.toLowerCase();
+
+  // ✅ Validate against enum
+  if (!Object.values(Role).includes(normalizedRole)) {
     return res.status(400).json({ message: 'Invalid role provided.' });
   }
 
@@ -42,7 +44,7 @@ export const createContact = async (req, res) => {
       data: {
         name,
         email,
-        role,
+        role: normalizedRole,  // <-- use normalized role here
         station,
         password: hashedPassword,
         active: true,
@@ -66,6 +68,7 @@ export const createContact = async (req, res) => {
     res.status(500).json({ error: 'Error creating contact' });
   }
 };
+
 
 // Update Contact
 export const updateContact = async (req, res) => {
