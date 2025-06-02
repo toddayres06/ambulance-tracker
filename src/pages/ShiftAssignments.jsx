@@ -47,21 +47,23 @@ const ShiftAssignments = () => {
 
   // Create new assignment
   const handleCreate = async e => {
-    e.preventDefault();
-    try {
-      console.log('Attempting to create assignment with data:', newAssign); // 🔍 Add this line
-      const res = await axios.post(
-        '/shift-assignments',
-        newAssign,
-        { headers }
-      );
-      setShifts(prev => [...prev, res.data]);
-      setNewAssign({ userId: '', shiftTypeId: '', date: '' });
-    } catch (err) {
-      console.error(err);
-      setError('Assignment failed');
-    }
-  };
+  e.preventDefault();
+
+  // Convert the date to ISO string if it's valid
+  const formattedDate = newAssign.date ? new Date(newAssign.date).toISOString() : null;
+
+  const assignmentData = { ...newAssign, date: formattedDate };
+
+  try {
+    console.log('Attempting to create assignment with data:', assignmentData); // 🔍 Add this line for debugging
+    const res = await axios.post('/shift-assignments', assignmentData, { headers });
+    setShifts(prev => [...prev, res.data]);
+    setNewAssign({ userId: '', shiftTypeId: '', date: '' });
+  } catch (err) {
+    console.error(err);
+    setError('Assignment failed');
+  }
+};
 
   // Update assignment
   const handleSave = async updated => {
