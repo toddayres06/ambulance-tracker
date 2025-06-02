@@ -16,6 +16,8 @@ export const getContacts = async (req, res) => {
 
 // Create Contact
 export const createContact = async (req, res) => {
+  console.log("🔥 FULL request payload:", req.body);
+
   const { name, email, role, station, password } = req.body;
 
   console.log('🛑 Incoming contact payload:', req.body);  // KEEP THIS FOR DEBUGGING
