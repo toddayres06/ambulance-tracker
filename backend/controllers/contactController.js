@@ -81,16 +81,23 @@ export const updateContact = async (req, res) => {
   }
 };
 
-// Delete Contact
+// Delete a contact safely
 export const deleteContact = async (req, res) => {
   const { id } = req.params;
   console.log(`🗑️ Attempting to delete user with id: ${id}`);
 
   try {
+    // Delete related shift assignments and schedules first (to prevent FK constraint errors)
+    await prisma.shiftAssignment.deleteMany({ where: { userId: parseInt(id) } });
+    await prisma.schedule.deleteMany({ where: { userId: parseInt(id) } });
+
+    // Now delete the user itself
     await prisma.user.delete({ where: { id: parseInt(id) } });
+
     res.status(204).send();
   } catch (err) {
     console.error('❌ Delete Contact Error:', err);
     res.status(500).json({ error: 'Error deleting contact' });
   }
 };
+
