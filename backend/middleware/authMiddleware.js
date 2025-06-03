@@ -15,6 +15,8 @@ export const authenticateToken = (req, res, next) => {
     if (err) {
       return res.status(403).json({ message: 'Invalid token' });
     }
+    console.log("Decoded JWT Payload:", payload);  // Log payload here for debugging
+
     // Fetch the user to get their role
     const user = await prisma.user.findUnique({ where: { id: payload.id } });
     if (!user) {

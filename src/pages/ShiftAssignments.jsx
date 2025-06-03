@@ -5,7 +5,7 @@ import EditShiftModal from '../components/EditShiftModal';
 
 const ShiftAssignments = () => {
   const { token, user } = useAuth();
-    console.log("Token in ShiftAssignments:", token);  // <-- Add it right here
+  console.log("Token in ShiftAssignments:", token);  // <-- Logging the token for debugging
 
   const [shifts, setShifts] = useState([]);
   const [shiftTypes, setShiftTypes] = useState([]);
@@ -19,7 +19,8 @@ const ShiftAssignments = () => {
 
   // Fetch assignments, types, and users
   useEffect(() => {
-    if (!token) return 
+    if (!token) return;  // If no token, don't fetch data
+
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -28,7 +29,7 @@ const ShiftAssignments = () => {
         const [assignRes, typesRes, usersRes] = await Promise.all([
           axios.get('/shift-assignments', { headers }),
           axios.get('/shift-types', { headers }),
-          axios.get('/users', { headers })
+          axios.get('/users', { headers }),
         ]);
 
         setShifts(assignRes.data);
@@ -42,31 +43,31 @@ const ShiftAssignments = () => {
         setLoading(false);
       }
     };
+
     fetchData();
   }, [token]);
 
   // Create new assignment
-  const handleCreate = async e => {
-  e.preventDefault();
+  const handleCreate = async (e) => {
+    e.preventDefault();
 
-  // Convert the date to ISO string if it's valid
-  const formattedDate = newAssign.date ? new Date(newAssign.date).toISOString() : null;
+    // Convert the date to ISO string if it's valid
+    const formattedDate = newAssign.date ? new Date(newAssign.date).toISOString() : null;
+    const assignmentData = { ...newAssign, date: formattedDate };
 
-  const assignmentData = { ...newAssign, date: formattedDate };
-
-  try {
-    console.log('Attempting to create assignment with data:', assignmentData); // 🔍 Add this line for debugging
-    const res = await axios.post('/shift-assignments', assignmentData, { headers });
-    setShifts(prev => [...prev, res.data]);
-    setNewAssign({ userId: '', shiftTypeId: '', date: '' });
-  } catch (err) {
-    console.error(err);
-    setError('Assignment failed');
-  }
-};
+    try {
+      console.log('Attempting to create assignment with data:', assignmentData); // 🔍 Debugging log
+      const res = await axios.post('/shift-assignments', assignmentData, { headers });
+      setShifts(prev => [...prev, res.data]);
+      setNewAssign({ userId: '', shiftTypeId: '', date: '' });
+    } catch (err) {
+      console.error(err);
+      setError('Assignment failed');
+    }
+  };
 
   // Update assignment
-  const handleSave = async updated => {
+  const handleSave = async (updated) => {
     try {
       const res = await axios.put(
         `/shift-assignments/${updated.id}`,
@@ -82,7 +83,7 @@ const ShiftAssignments = () => {
   };
 
   // Delete assignment
-  const handleDelete = async id => {
+  const handleDelete = async (id) => {
     if (!window.confirm('Delete this assignment?')) return;
     try {
       await axios.delete(`/shift-assignments/${id}`, { headers });
@@ -153,7 +154,7 @@ const ShiftAssignments = () => {
           <div key={shift.id} className="flex justify-between items-center border p-4 rounded">
             <div>
               <div>
-                <strong>{shift.user?.name || 'Unknown User'}</strong>
+                <strong>{shift.user?.name || 'Unknown User'}</strong> {/* Use optional chaining */}
               </div>
               <div>
                 {shift.shiftType?.name || 'Unknown Shift'}
@@ -165,7 +166,6 @@ const ShiftAssignments = () => {
               <button onClick={() => handleDelete(shift.id)} className="text-red-600">Delete</button>
             </div>
           </div>
-
         ))}
       </div>
 

@@ -1,4 +1,3 @@
-// /backend/index.js
 import 'dotenv/config';   // ← MUST be first to load .env
 
 import cors from 'cors';
@@ -38,7 +37,7 @@ app.use(
 );
 
 // ⏰ Shift assignments – protected per-method in routes
-app.use('/api/shift-assignments', shiftAssignmentRoutes);
+app.use('/api/shift-assignments', authenticateToken, shiftAssignmentRoutes);
 
 // 👑 Admin‑only pages
 app.use('/admin', adminRoutes);
