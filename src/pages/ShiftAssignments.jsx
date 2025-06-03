@@ -26,11 +26,19 @@ const ShiftAssignments = () => {
         setLoading(true);
         setError(null);
 
+        console.log('Fetching data with token:', token);  // Add this line to log token
+
+
         const [assignRes, typesRes, usersRes] = await Promise.all([
           axios.get('/shift-assignments', { headers }),
           axios.get('/shift-types', { headers }),
           axios.get('/users', { headers }),
         ]);
+
+        
+        console.log('Shift assignments:', assignRes.data);  // Log the response data for shifts
+        console.log('Shift types:', typesRes.data);  // Log the response data for shift types
+        console.log('Users:', usersRes.data);  // Log the response data for users
 
         setShifts(assignRes.data);
         setShiftTypes(typesRes.data);
