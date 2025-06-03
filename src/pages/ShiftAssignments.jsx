@@ -1,3 +1,5 @@
+// /frontend/pages/ShiftAssignments.jsx
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
@@ -28,14 +30,13 @@ const ShiftAssignments = () => {
 
         console.log('Fetching data with token:', token);  // Add this line to log token
 
-
         const [assignRes, typesRes, usersRes] = await Promise.all([
           axios.get('/shift-assignments', { headers }),
           axios.get('/shift-types', { headers }),
           axios.get('/users', { headers }),
         ]);
 
-        
+        // Log the responses to verify the data being returned
         console.log('Shift assignments:', assignRes.data);  // Log the response data for shifts
         console.log('Shift types:', typesRes.data);  // Log the response data for shift types
         console.log('Users:', usersRes.data);  // Log the response data for users
