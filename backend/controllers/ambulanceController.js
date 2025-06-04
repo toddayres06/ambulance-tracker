@@ -1,3 +1,5 @@
+import prisma from '../lib/prismaClient.js'; // Make sure this matches the actual path to your prismaClient.js
+
 // In your backend, inside ambulanceController.js
 export const updateLocation = async (req, res) => {
   const { latitude, longitude } = req.body; // Get latitude and longitude from request body
