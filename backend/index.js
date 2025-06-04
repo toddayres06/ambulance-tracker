@@ -15,7 +15,10 @@ import { seedAdminUser } from './models/User.js';
 const app = express();
 const PORT = 3001;
 
-app.use(cors());
+app.use(cors({
+    origin: 'emssync.netlify.app',  // Add your Netlify frontend URL here
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  }));
 app.use(express.json());
 
 // 🔐 Auth routes (signup/login)

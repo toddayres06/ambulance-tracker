@@ -20,7 +20,7 @@ export function AuthProvider({ children }) {
 
   // login() sends creds, stores token+user, updates state
   const login = async (email, password) => {
-    const res = await fetch('/api/auth/login', {
+    const res = await fetch('https://ambulance-tracker-7e8t.onrender.com/api/auth/login', {  // Use the full URL here
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
