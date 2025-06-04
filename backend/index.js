@@ -1,9 +1,8 @@
 import 'dotenv/config';   // ← MUST be first to load .env
-
 import cors from 'cors';
 import express from 'express';
 import authRoutes from './routes/authRoutes.js';
-import ambulanceRoutes from './routes/ambulanceRoutes.js'
+import ambulanceRoutes from './routes/ambulanceRoutes.js'; // Import the ambulance routes
 import shiftTypeRoutes from './routes/shiftTypeRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import shiftAssignmentRoutes from './routes/shiftAssignmentRoutes.js';
@@ -11,7 +10,6 @@ import contactRoutes from './routes/contactRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import prisma from './lib/prismaClient.js';
 import { authenticateToken } from './middleware/authMiddleware.js';
-import { authorizeRole } from './middleware/roleMiddleware.js';
 import { seedAdminUser } from './models/User.js';
 
 const app = express();
@@ -23,7 +21,7 @@ app.use(express.json());
 // 🔐 Auth routes (signup/login)
 app.use('/api/auth', authRoutes);
 
-app.use('/api', ambulanceRoutes)
+app.use('/api', ambulanceRoutes);  // Use ambulance routes here
 
 // 🚑 Shift template management
 app.use('/api/shift-types', shiftTypeRoutes);

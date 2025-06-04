@@ -21,6 +21,19 @@ model User {
   updatedAt        DateTime          @updatedAt
   schedules        Schedule[]
   shiftAssignments ShiftAssignment[]
+  ambulances       Ambulance[]       // Added relationship to Ambulance model
+}
+
+// Ambulance model added to track GPS coordinates and status
+model Ambulance {
+  id          Int      @id @default(autoincrement())
+  latitude    Float    // Latitude of the ambulance
+  longitude   Float    // Longitude of the ambulance
+  status      String   // Current status, e.g., "active", "in service"
+  driverId    Int      // Foreign key to the driver (User)
+  driver      User     @relation(fields: [driverId], references: [id]) // Relationship to User (driver)
+  createdAt   DateTime @default(now()) // Timestamp for when it was created
+  updatedAt   DateTime @updatedAt      // Auto-updated timestamp
 }
 
 model Schedule {

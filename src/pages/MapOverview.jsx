@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import ambulanceIcon from '../assets/ambulance.png'; // keep your working icon here!
+import ambulanceIcon from '../assets/ambulance.png';
 
 const MapOverview = () => {
   const [ambulances, setAmbulances] = useState([]);
@@ -11,22 +11,33 @@ const MapOverview = () => {
   const fetchAmbulances = async () => {
     try {
       const response = await fetch('https://ambulance-tracker-7e8t.onrender.com/api/ambulances');
+      
+      // Check if the response is valid
+      if (!response.ok) {
+        throw new Error('Failed to fetch ambulances: ' + response.statusText);
+      }
+
       const data = await response.json();
-      setAmbulances((currentAmbulances) => {
-        // Update each ambulance's position if the coordinates have changed
-        data.forEach((newAmbulance) => {
-          const marker = markersRef.current[newAmbulance.id];
-          if (marker) {
-            // Get the current position of the marker
-            const { lat, lng } = marker.getLatLng();
-            // Calculate the new position (linear interpolation)
-            const newLat = lat + (newAmbulance.latitude - lat) * 0.2;
-            const newLng = lng + (newAmbulance.longitude - lng) * 0.2;
-            marker.setLatLng([newLat, newLng]);  // Update the marker's position
-          }
+      if (Array.isArray(data)) {
+        setAmbulances((currentAmbulances) => {
+          // Update each ambulance's position if the coordinates have changed
+          data.forEach((newAmbulance) => {
+            const marker = markersRef.current[newAmbulance.id];
+            if (marker) {
+              // Get the current position of the marker
+              const { lat, lng } = marker.getLatLng();
+              // Calculate the new position (linear interpolation)
+              const newLat = lat + (newAmbulance.latitude - lat) * 0.2;
+              const newLng = lng + (newAmbulance.longitude - lng) * 0.2;
+              marker.setLatLng([newLat, newLng]);  // Update the marker's position
+            }
+          });
+          return data;  // Return updated ambulance list to trigger re-render if new ambulances are added
         });
-        return data;  // Return updated ambulance list to trigger re-render if new ambulances are added
-      });
+      } else {
+        console.error('Expected an array but received:', data);
+        setAmbulances([]);  // Optionally set it to empty if not an array
+      }
     } catch (error) {
       console.error('Error fetching ambulances:', error);
     }

@@ -50,6 +50,7 @@ const router = createBrowserRouter([
           { path: 'weekly-schedules', element: <ShiftAssignments />},
           { path: 'shift-templates', element: <ShiftTypes /> },
           { path: 'contacts', element: <Contacts /> },
+          { path: 'track', element: <UnitTracker /> },
           { path: 'map-overview', element: <MapOverview /> },
           { path: 'weekly-schedules', element: <div>Weekly Schedule Placeholder</div> }, // Add your actual component
           { path: 'units', element: <Units /> },
@@ -82,9 +83,7 @@ const router = createBrowserRouter([
       { path: 'unit/:id', element: <UnitDetail /> },
       { path: 'live-map', element: <MapView /> },
       { path: 'map-overview', element: <MapOverview /> },
-      { path: 'track', element: <UnitTracker /> },
       { path: 'dispatcher', element: <Dispatcher /> },
-
       { path: '/debug-token', element: <DebugToken /> },
       { path: '*', element: <NotFound /> },
     ],
