@@ -3,6 +3,7 @@ import 'dotenv/config';   // ← MUST be first to load .env
 import cors from 'cors';
 import express from 'express';
 import authRoutes from './routes/authRoutes.js';
+import ambulanceRoutes from './routes/ambulanceRoutes.js'
 import shiftTypeRoutes from './routes/shiftTypeRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import shiftAssignmentRoutes from './routes/shiftAssignmentRoutes.js';
@@ -21,6 +22,8 @@ app.use(express.json());
 
 // 🔐 Auth routes (signup/login)
 app.use('/api/auth', authRoutes);
+
+app.use('/api', ambulanceRoutes)
 
 // 🚑 Shift template management
 app.use('/api/shift-types', shiftTypeRoutes);

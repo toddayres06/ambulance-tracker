@@ -70,6 +70,7 @@ const router = createBrowserRouter([
         element: <PrivateRoute allowedRoles={[ROLES.DISPATCHER]} />,
         children: [
           { index: true, element: <DispatcherDashboard /> }, // ← this is /dispatcher
+          { path: 'schedule', element: <Schedule /> }, // <-Schedule
           { path: 'control-panel', element: <Dispatcher /> }, // ← this is /dispatcher/control-panel
           { path: 'map-overview', element: <MapOverview /> }, // ← this is /dispatcher/map-overview
           { path: 'units', element: <Units /> }, // ← this is /dispatcher/units

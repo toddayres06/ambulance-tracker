@@ -5,24 +5,27 @@ import ambulanceIcon from '../assets/ambulance.png'; // keep your working icon h
 
 const MapOverview = () => {
   const [ambulances, setAmbulances] = useState([]);
-  const markersRef = useRef({});
+  const markersRef = useRef({});  // Use a ref to track marker instances
 
+  // Fetch ambulances and update their positions
   const fetchAmbulances = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/ambulances');
+      const response = await fetch('https://ambulance-tracker-7e8t.onrender.com/api/ambulances');
       const data = await response.json();
       setAmbulances((currentAmbulances) => {
+        // Update each ambulance's position if the coordinates have changed
         data.forEach((newAmbulance) => {
           const marker = markersRef.current[newAmbulance.id];
           if (marker) {
+            // Get the current position of the marker
             const { lat, lng } = marker.getLatLng();
-            // Simple linear interpolation
+            // Calculate the new position (linear interpolation)
             const newLat = lat + (newAmbulance.latitude - lat) * 0.2;
             const newLng = lng + (newAmbulance.longitude - lng) * 0.2;
-            marker.setLatLng([newLat, newLng]);
+            marker.setLatLng([newLat, newLng]);  // Update the marker's position
           }
         });
-        return data; // Update state to create any new markers if needed
+        return data;  // Return updated ambulance list to trigger re-render if new ambulances are added
       });
     } catch (error) {
       console.error('Error fetching ambulances:', error);
@@ -33,11 +36,12 @@ const MapOverview = () => {
     fetchAmbulances();
     const interval = setInterval(fetchAmbulances, 1000); // Fetch every second for smoother updates
     return () => clearInterval(interval);
-  }, []);
+  }, []); // Run this effect once when the component mounts
 
+  // Custom ambulance marker icon
   const customIcon = L.icon({
     iconUrl: ambulanceIcon,
-    iconSize: [40, 40],
+    iconSize: [40, 40],  // Resize the ambulance icon
   });
 
   return (
@@ -49,9 +53,9 @@ const MapOverview = () => {
       {ambulances.map((ambulance) => (
         <Marker
           key={ambulance.id}
-          position={[ambulance.latitude, ambulance.longitude]}
+          position={[ambulance.latitude, ambulance.longitude]}  // Use the initial position
           ref={(ref) => {
-            if (ref) markersRef.current[ambulance.id] = ref;
+            if (ref) markersRef.current[ambulance.id] = ref;  // Store marker reference
           }}
           icon={customIcon}
         >

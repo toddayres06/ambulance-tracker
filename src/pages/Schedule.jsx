@@ -38,7 +38,7 @@ export default function Schedule() {
             <li key={s.id} className="border p-4 rounded">
               <div><strong>Date:</strong> {new Date(s.date).toLocaleDateString()}</div>
               <div><strong>Shift:</strong> {s.shiftType.name}</div>
-              <div><strong>Assigned by:</strong> {s.user.name}</div>
+              <div><strong>Assigned to:</strong> {s.user.name}</div>
             </li>
           ))}
         </ul>

@@ -23,6 +23,12 @@ const DispatcherDashboard = () => {
             Control Panel
           </button>
         </Link>
+
+          <Link to="/dispatcher/schedule">
+          <button className="w-full rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-semibold py-5 px-6 shadow-lg transition duration-300">
+            View My Weekly Schedule
+          </button>
+        </Link>
       </div>
     </div>
   );
