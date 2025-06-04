@@ -37,6 +37,7 @@ app.use(
   userRoutes
 );
 
+
 // ⏰ Shift assignments – protected per-method in routes
 app.use('/api/shift-assignments', authenticateToken, shiftAssignmentRoutes);
 

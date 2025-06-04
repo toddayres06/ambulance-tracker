@@ -1,15 +1,31 @@
-import prisma from '../lib/prismaClient.js'; // Prisma client to interact with your database
+// In your backend, inside ambulanceController.js
+export const updateLocation = async (req, res) => {
+  const { latitude, longitude } = req.body; // Get latitude and longitude from request body
 
-// Controller function to get ambulance data
-export const getAmbulances = async (req, res) => {
-  console.log('Received request for ambulances');  // Log when the request is received
   try {
-    // Fetch ambulances from the database
+    // Create a new ambulance record with the provided latitude and longitude
+    const ambulance = await prisma.ambulance.create({
+      data: {
+        latitude,  // Latitude from the request body
+        longitude, // Longitude from the request body
+      },
+    });
+
+    res.status(200).json(ambulance); // Return the created ambulance object as a response
+  } catch (error) {
+    console.error('Error updating location:', error); // Log the error for debugging
+    res.status(500).json({ error: 'Error updating location' }); // Return an error response if something goes wrong
+  }
+};
+
+// Get all ambulances' locations
+export const getAllAmbulances = async (req, res) => {
+  try {
     const ambulances = await prisma.ambulance.findMany();
-    console.log('Ambulances fetched:', ambulances);  // Log fetched data
-    res.json(ambulances);  // Send the data as JSON response
+    res.status(200).json(ambulances);
   } catch (error) {
     console.error('Error fetching ambulances:', error);
     res.status(500).json({ error: 'Error fetching ambulances' });
   }
 };
+
