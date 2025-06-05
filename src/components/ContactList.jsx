@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 
 const roleColors = {
   EMT: 'bg-blue-100 text-blue-800',
