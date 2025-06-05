@@ -8,7 +8,7 @@ const Contacts = () => {
   const [showCreate, setShowCreate] = useState(false);
 
   useEffect(() => {
-    axios.get('/contacts')
+    axios.get('https://ambulance-tracker-7e8t.onrender.com/api/contacts')  // Now hits the Render backend
       .then((res) => setContacts(res.data))
       .catch((err) => console.error('Failed to fetch contacts', err));
   }, []);
@@ -26,7 +26,7 @@ const Contacts = () => {
           isOpen={showCreate}
           onClose={() => setShowCreate(false)}
           onCreate={(newContact) => {
-          axios.post('/contacts', newContact)
+          axios.post('https://ambulance-tracker-7e8t.onrender.com/api/contacts', newContact) // Updated POST request to Render backend
           .then(res => {
           console.log('🔍 New contact response:', res.data);
           setContacts(prev => [...prev, res.data.user]);

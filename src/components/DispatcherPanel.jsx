@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { toast } from 'react-hot-toast'
+import { toast } from 'react-hot-toast';
 
 const DispatcherPanel = () => {
   const [ambulances, setAmbulances] = useState([]);
 
+  // Fetch ambulances from the backend
   const fetchAmbulances = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/ambulances');
+      // Updated to Render backend URL
+      const response = await fetch('https://ambulance-tracker-7e8t.onrender.com/api/ambulances');
       const data = await response.json();
       setAmbulances(data);
     } catch (error) {
@@ -14,6 +16,7 @@ const DispatcherPanel = () => {
     }
   };
 
+  // Handle status change of the ambulance
   const handleStatusChange = async (id, newStatus) => {
     setAmbulances(prev =>
       prev.map(ambulance =>
@@ -22,17 +25,17 @@ const DispatcherPanel = () => {
     );
 
     const toastId = toast.loading('Updating status...');
-  
 
     try {
-      const response = await fetch(`http://localhost:3001/api/ambulances/${id}`, {
+      // Update the ambulance status via PATCH request
+      const response = await fetch(`https://ambulance-tracker-7e8t.onrender.com/api/ambulances/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ status: newStatus }),
       });
-  
+
       if (response.ok) {
         toast.success(`Status updated to "${newStatus}"`, { id: toastId });
       } else {
@@ -44,6 +47,7 @@ const DispatcherPanel = () => {
     }
   };
 
+  // Fetch ambulances initially and set interval for periodic updates
   useEffect(() => {
     fetchAmbulances();
     const interval = setInterval(fetchAmbulances, 5000);

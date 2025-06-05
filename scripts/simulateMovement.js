@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+import axios from 'axios'; // Import axios
 
 // Starting point (Houston downtown)
 let latitude = 29.7604;
@@ -17,14 +17,18 @@ const sendLocation = async () => {
   moveSlightly();
 
   try {
-    const res = await fetch('http://localhost:3001/api/location', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ latitude, longitude }),
+    // Using axios to send the POST request instead of fetch
+    const res = await axios.post(`${import.meta.env.VITE_API_URL}/location`, {
+      latitude,
+      longitude
     });
 
-    if (!res.ok) throw new Error('Failed to send location');
-    console.log(`Location sent: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
+    // Check if the response was successful
+    if (res.status === 200) {
+      console.log(`Location sent: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
+    } else {
+      throw new Error('Failed to send location');
+    }
   } catch (err) {
     console.error('Error sending location:', err.message);
   }

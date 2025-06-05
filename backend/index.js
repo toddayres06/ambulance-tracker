@@ -18,7 +18,8 @@ const PORT = 3001;
 // Allow both localhost and production origin
 const allowedOrigins = [
   'http://localhost:5173',  // Localhost for dev
-  'https://emssync.netlify.app'  // Production frontend URL
+  'https://emssync.netlify.app',  // Production frontend URL
+  'https://ambulance-tracker-7e8t.onrender.com'  // Your Render backend URL
 ];
 
 app.use(cors({

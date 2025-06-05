@@ -9,9 +9,13 @@ const roleColors = {
 const ContactList = ({ contacts, setContacts }) => {
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`/contacts/${id}`);
+      // Use the full URL with the base API URL for production
+      await axios.delete(`${import.meta.env.VITE_API_URL}/contacts/${id}`);
+
+      // Remove the deleted contact from the state
       setContacts(prev => prev.filter(contact => contact.id !== id));
     } catch (err) {
+      // Log any errors that occur during the delete request
       console.error('Delete failed:', err);
     }
   };

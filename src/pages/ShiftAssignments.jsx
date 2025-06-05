@@ -1,5 +1,3 @@
-// /frontend/pages/ShiftAssignments.jsx
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
@@ -31,15 +29,15 @@ const ShiftAssignments = () => {
         console.log('Fetching data with token:', token);  // Add this line to log token
 
         const [assignRes, typesRes, usersRes] = await Promise.all([
-          axios.get('/shift-assignments', { headers }),
-          axios.get('/shift-types', { headers }),
-          axios.get('/users', { headers }),
+          axios.get(`${import.meta.env.VITE_API_URL}/shift-assignments`, { headers }),  // Updated API URL
+          axios.get(`${import.meta.env.VITE_API_URL}/shift-types`, { headers }),         // Updated API URL
+          axios.get(`${import.meta.env.VITE_API_URL}/users`, { headers }),               // Updated API URL
         ]);
 
         // Log the responses to verify the data being returned
         console.log('Shift assignments:', assignRes.data);  // Log the response data for shifts
-        console.log('Shift types:', typesRes.data);  // Log the response data for shift types
-        console.log('Users:', usersRes.data);  // Log the response data for users
+        console.log('Shift types:', typesRes.data);         // Log the response data for shift types
+        console.log('Users:', usersRes.data);               // Log the response data for users
 
         setShifts(assignRes.data);
         setShiftTypes(typesRes.data);
@@ -66,7 +64,7 @@ const ShiftAssignments = () => {
 
     try {
       console.log('Attempting to create assignment with data:', assignmentData); // 🔍 Debugging log
-      const res = await axios.post('/shift-assignments', assignmentData, { headers });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/shift-assignments`, assignmentData, { headers }); // Updated API URL
       setShifts(prev => [...prev, res.data]);
       setNewAssign({ userId: '', shiftTypeId: '', date: '' });
     } catch (err) {
@@ -79,10 +77,10 @@ const ShiftAssignments = () => {
   const handleSave = async (updated) => {
     try {
       const res = await axios.put(
-        `/shift-assignments/${updated.id}`,
+        `${import.meta.env.VITE_API_URL}/shift-assignments/${updated.id}`,
         updated,
         { headers }
-      );
+      );  // Updated API URL
       setShifts(prev => prev.map(s => s.id === updated.id ? res.data : s));
       setEditingShift(null);
     } catch (err) {
@@ -95,7 +93,7 @@ const ShiftAssignments = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this assignment?')) return;
     try {
-      await axios.delete(`/shift-assignments/${id}`, { headers });
+      await axios.delete(`${import.meta.env.VITE_API_URL}/shift-assignments/${id}`, { headers }); // Updated API URL
       setShifts(prev => prev.filter(s => s.id !== id));
     } catch (err) {
       console.error(err);

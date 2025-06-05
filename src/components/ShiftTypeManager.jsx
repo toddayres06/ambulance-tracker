@@ -16,28 +16,53 @@ const ShiftTypeManager = () => {
     fetchShiftTypes();
   }, []);
 
+  // Fetching shift types with full URL for production
   const fetchShiftTypes = async () => {
-    const res = await axios.get('/shift-types');
-    setShiftTypes(res.data);
+    try {
+      // Use the full URL from the environment variable for production
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/shift-types`);
+
+      // Update the state with the fetched shift types
+      setShiftTypes(res.data);
+    } catch (error) {
+      // Handle errors gracefully
+      console.error('Error fetching shift types:', error);
+      // Optionally, display a user-friendly message here
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post('/shift-types', form);
-    setForm({ name: '', startTime: '', endTime: '' });
-    fetchShiftTypes();
+    try {
+      // Posting to the Render API for shift types
+      await axios.post(`${import.meta.env.VITE_API_URL}/shift-types`, form);
+      setForm({ name: '', startTime: '', endTime: '' });
+      fetchShiftTypes();  // Refresh shift types after adding a new one
+    } catch (error) {
+      console.error('Error creating shift type:', error);
+    }
   };
 
   const handleDelete = async (id) => {
-    await axios.delete(`/shift-types/${id}`);
-    fetchShiftTypes();
+    try {
+      // Sending a DELETE request to remove the shift type
+      await axios.delete(`${import.meta.env.VITE_API_URL}/shift-types/${id}`);
+      fetchShiftTypes();  // Refresh shift types after deletion
+    } catch (error) {
+      console.error('Error deleting shift type:', error);
+    }
   };
 
   // ✅ This is what was missing — handler to update an existing shift
   const handleUpdateShiftType = async (updatedShift) => {
-    await axios.put(`/api/shift-types/${updatedShift.id}`, updatedShift);
-    setEditingShift(null);
-    fetchShiftTypes();
+    try {
+      // Sending PUT request to update the shift type
+      await axios.put(`${import.meta.env.VITE_API_URL}/shift-types/${updatedShift.id}`, updatedShift);
+      setEditingShift(null);  // Reset the editing state
+      fetchShiftTypes();  // Refresh shift types after update
+    } catch (error) {
+      console.error('Error updating shift type:', error);
+    }
   };
 
   return (
