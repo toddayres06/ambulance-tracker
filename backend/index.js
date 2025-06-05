@@ -15,10 +15,28 @@ import { seedAdminUser } from './models/User.js';
 const app = express();
 const PORT = 3001;
 
+// Allow both localhost and production origin
+const allowedOrigins = [
+  'http://localhost:5173',  // Localhost for dev
+  'https://emssync.netlify.app'  // Production frontend URL
+];
+
 app.use(cors({
-    origin: 'emssync.netlify.app',  // Add your Netlify frontend URL here
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  }));
+  origin: function (origin, callback) {
+    console.log(`Incoming request from: ${origin}`);  // Debug log
+    // If origin is in the allowed origins list or there's no origin (e.g., in Postman or cURL)
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);  // Allow the origin if it matches
+    } else {
+      // Log the error if the origin is not allowed
+      console.log(`CORS error: ${origin} not allowed`);
+      callback(new Error('Not allowed by CORS'));  // Reject other origins
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true  // Allow credentials (cookies, tokens)
+}));
+
 app.use(express.json());
 
 // 🔐 Auth routes (signup/login)
@@ -40,14 +58,11 @@ app.use(
   userRoutes
 );
 
-
 // ⏰ Shift assignments – protected per-method in routes
 app.use('/api/shift-assignments', authenticateToken, shiftAssignmentRoutes);
 
 // 👑 Admin‑only pages
 app.use('/admin', adminRoutes);
-
-// … any other routes (ambulance fleet, etc.) …
 
 // Ensure your seeded admin account exists
 await seedAdminUser();
