@@ -17,7 +17,7 @@ const Contacts = () => {
     if (!token) return;  // Don't fetch contacts if there's no token
 
     // Fetch contacts with authorization header
-    axios.get(`${import.meta.env.VITE_API_URL}/contacts`, { headers })
+    axios.get(`${import.meta.env.VITE_API_URL}/api/contacts`, { headers })  // Updated URL
       .then((res) => setContacts(res.data))
       .catch((err) => console.error('Failed to fetch contacts', err));
   }, [token]); // Re-fetch contacts when the token changes
@@ -37,7 +37,7 @@ const Contacts = () => {
         onClose={() => setShowCreate(false)}
         onCreate={(newContact) => {
           // Send POST request to create a new contact with the authorization header
-          axios.post(`${import.meta.env.VITE_API_URL}/contacts`, newContact, { headers })
+          axios.post(`${import.meta.env.VITE_API_URL}/api/contacts`, newContact, { headers })  // Updated URL
             .then(res => {
               console.log('🔍 New contact response:', res.data);
               setContacts(prev => [...prev, res.data.user]); // Add new contact to the list

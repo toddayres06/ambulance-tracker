@@ -65,7 +65,7 @@ const ShiftAssignments = () => {
 
     try {
       console.log('Attempting to create assignment with data:', assignmentData); // Debugging log
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/shift-assignments`, assignmentData, { headers }); // Updated API URL
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/shift-assignments`, assignmentData, { headers }); // Updated API URL
       setShifts(prev => [...prev, res.data]);
       setNewAssign({ userId: '', shiftTypeId: '', date: '' });
     } catch (err) {
@@ -78,7 +78,7 @@ const ShiftAssignments = () => {
   const handleSave = async (updated) => {
     try {
       const res = await axios.put(
-        `${import.meta.env.VITE_API_URL}/shift-assignments/${updated.id}`,
+        `${import.meta.env.VITE_API_URL}/api/shift-assignments/${updated.id}`,
         updated,
         { headers }
       );  // Updated API URL
@@ -94,7 +94,7 @@ const ShiftAssignments = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this assignment?')) return;
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/shift-assignments/${id}`, { headers }); // Updated API URL
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/shift-assignments/${id}`, { headers }); // Updated API URL
       setShifts(prev => prev.filter(s => s.id !== id));
     } catch (err) {
       console.error(err);

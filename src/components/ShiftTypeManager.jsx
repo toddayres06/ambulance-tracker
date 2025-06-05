@@ -25,7 +25,7 @@ const ShiftTypeManager = () => {
   // Fetching shift types with full URL for production
   const fetchShiftTypes = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/shift-types`, { headers });  // Updated with headers
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/shift-types`, { headers });  // Updated with headers
       setShiftTypes(res.data);
     } catch (error) {
       console.error('Error fetching shift types:', error);
@@ -35,7 +35,7 @@ const ShiftTypeManager = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/shift-types`, form, { headers });  // Added headers
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/shift-types`, form, { headers });  // Added headers
       setForm({ name: '', startTime: '', endTime: '' });
       fetchShiftTypes();  // Refresh shift types after adding a new one
     } catch (error) {
@@ -45,7 +45,7 @@ const ShiftTypeManager = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/shift-types/${id}`, { headers });  // Added headers
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/shift-types/${id}`, { headers });  // Added headers
       fetchShiftTypes();  // Refresh shift types after deletion
     } catch (error) {
       console.error('Error deleting shift type:', error);
@@ -55,7 +55,7 @@ const ShiftTypeManager = () => {
   // Handler to update an existing shift
   const handleUpdateShiftType = async (updatedShift) => {
     try {
-      await axios.put(`${import.meta.env.VITE_API_URL}/shift-types/${updatedShift.id}`, updatedShift, { headers });  // Added headers
+      await axios.put(`${import.meta.env.VITE_API_URL}/api/shift-types/${updatedShift.id}`, updatedShift, { headers });  // Added headers
       setEditingShift(null);  // Reset the editing state
       fetchShiftTypes();  // Refresh shift types after update
     } catch (error) {
