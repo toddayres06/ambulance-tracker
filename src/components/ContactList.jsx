@@ -7,10 +7,14 @@ const roleColors = {
 };
 
 const ContactList = ({ contacts, setContacts }) => {
+  const { token } = useAuth();  // Access the token from AuthContext
+
   const handleDelete = async (id) => {
     try {
+      const headers = { Authorization: `Bearer ${token}` };  // Add Authorization header with token
+
       // Use the full URL with the base API URL for production
-      await axios.delete(`${import.meta.env.VITE_API_URL}/contacts/${id}`);
+      await axios.delete(`${import.meta.env.VITE_API_URL}/contacts/${id}`, { headers });
 
       // Remove the deleted contact from the state
       setContacts(prev => prev.filter(contact => contact.id !== id));

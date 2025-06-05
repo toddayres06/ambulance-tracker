@@ -27,6 +27,7 @@ const DebugToken = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
+    console.log('Token retrieved from localStorage:', token); // <-- Add this log
     setRawToken(token);
 
     if (token) {

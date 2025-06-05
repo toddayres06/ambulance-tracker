@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import { useAuth } from '../context/AuthContext';
 import EditShiftModal from './EditShiftModal';
 
 const ShiftTypeManager = () => {
+  const { token } = useAuth(); // Get token from context
   const [shiftTypes, setShiftTypes] = useState([]);
   const [form, setForm] = useState({
     name: '',
@@ -12,30 +13,29 @@ const ShiftTypeManager = () => {
   });
   const [editingShift, setEditingShift] = useState(null);
 
+  // Authorization header with Bearer token
+  const headers = {
+    Authorization: `Bearer ${token}`, // Add Authorization header here
+  };
+
   useEffect(() => {
     fetchShiftTypes();
-  }, []);
+  }, [token]);
 
   // Fetching shift types with full URL for production
   const fetchShiftTypes = async () => {
     try {
-      // Use the full URL from the environment variable for production
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/shift-types`);
-
-      // Update the state with the fetched shift types
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/shift-types`, { headers });  // Updated with headers
       setShiftTypes(res.data);
     } catch (error) {
-      // Handle errors gracefully
       console.error('Error fetching shift types:', error);
-      // Optionally, display a user-friendly message here
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Posting to the Render API for shift types
-      await axios.post(`${import.meta.env.VITE_API_URL}/shift-types`, form);
+      await axios.post(`${import.meta.env.VITE_API_URL}/shift-types`, form, { headers });  // Added headers
       setForm({ name: '', startTime: '', endTime: '' });
       fetchShiftTypes();  // Refresh shift types after adding a new one
     } catch (error) {
@@ -45,19 +45,17 @@ const ShiftTypeManager = () => {
 
   const handleDelete = async (id) => {
     try {
-      // Sending a DELETE request to remove the shift type
-      await axios.delete(`${import.meta.env.VITE_API_URL}/shift-types/${id}`);
+      await axios.delete(`${import.meta.env.VITE_API_URL}/shift-types/${id}`, { headers });  // Added headers
       fetchShiftTypes();  // Refresh shift types after deletion
     } catch (error) {
       console.error('Error deleting shift type:', error);
     }
   };
 
-  // ✅ This is what was missing — handler to update an existing shift
+  // Handler to update an existing shift
   const handleUpdateShiftType = async (updatedShift) => {
     try {
-      // Sending PUT request to update the shift type
-      await axios.put(`${import.meta.env.VITE_API_URL}/shift-types/${updatedShift.id}`, updatedShift);
+      await axios.put(`${import.meta.env.VITE_API_URL}/shift-types/${updatedShift.id}`, updatedShift, { headers });  // Added headers
       setEditingShift(null);  // Reset the editing state
       fetchShiftTypes();  // Refresh shift types after update
     } catch (error) {
@@ -100,7 +98,6 @@ const ShiftTypeManager = () => {
               {shift.name} ({shift.startTime} - {shift.endTime})
             </span>
             <div>
-              {/* ✅ Add the missing Edit button here */}
               <button
                 onClick={() => setEditingShift(shift)}
                 className="text-blue-600 hover:underline mr-3"
@@ -118,7 +115,6 @@ const ShiftTypeManager = () => {
         ))}
       </ul>
 
-      {/* ✅ This shows the Edit modal */}
       {editingShift && (
         <EditShiftModal
           shift={editingShift}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import EditShiftModal from '../components/EditShiftModal';
@@ -15,6 +15,7 @@ const ShiftAssignments = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Authorization header
   const headers = { Authorization: `Bearer ${token}` };
 
   // Fetch assignments, types, and users
@@ -26,7 +27,7 @@ const ShiftAssignments = () => {
         setLoading(true);
         setError(null);
 
-        console.log('Fetching data with token:', token);  // Add this line to log token
+        console.log('Fetching data with token:', token);  // Log token
 
         const [assignRes, typesRes, usersRes] = await Promise.all([
           axios.get(`${import.meta.env.VITE_API_URL}/shift-assignments`, { headers }),  // Updated API URL
@@ -52,7 +53,7 @@ const ShiftAssignments = () => {
     };
 
     fetchData();
-  }, [token]);
+  }, [token]); // Run fetchData whenever the token changes
 
   // Create new assignment
   const handleCreate = async (e) => {
@@ -63,7 +64,7 @@ const ShiftAssignments = () => {
     const assignmentData = { ...newAssign, date: formattedDate };
 
     try {
-      console.log('Attempting to create assignment with data:', assignmentData); // 🔍 Debugging log
+      console.log('Attempting to create assignment with data:', assignmentData); // Debugging log
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/shift-assignments`, assignmentData, { headers }); // Updated API URL
       setShifts(prev => [...prev, res.data]);
       setNewAssign({ userId: '', shiftTypeId: '', date: '' });
