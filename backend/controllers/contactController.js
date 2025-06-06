@@ -9,7 +9,7 @@ export const getContacts = async (req, res) => {
 
   try {
     // Check if you're fetching from the correct table (should be 'contact', not 'user' unless they're the same)
-    const contacts = await prisma.contact.findMany(); // Adjust if you have a separate contact table
+    const contacts = await prisma.user.findMany(); // Adjust if you have a separate contact table
     console.log("✅ Fetched contacts:", contacts);
     res.json(contacts); // Sending contacts back
   } catch (err) {
