@@ -2,7 +2,7 @@ import prisma from '../lib/prismaClient.js'; // Make sure this matches the actua
 
 // In your backend, inside ambulanceController.js
 export const updateLocation = async (req, res) => {
-  const { latitude, longitude } = req.body; // Get latitude and longitude from request body
+  const { latitude, longitude, status } = req.body; // Get latitude and longitude from request body
 
   try {
     // Create a new ambulance record with the provided latitude and longitude
@@ -10,6 +10,7 @@ export const updateLocation = async (req, res) => {
       data: {
         latitude,  // Latitude from the request body
         longitude, // Longitude from the request body
+        status,
       },
     });
 
