@@ -5,9 +5,13 @@ const prisma = new PrismaClient();
 
 // Get Contacts
 export const getContacts = async (req, res) => {
+  console.log("🔍 Incoming request to get contacts...");
+
   try {
-    const contacts = await prisma.user.findMany();
-    res.json(contacts);
+    // Check if you're fetching from the correct table (should be 'contact', not 'user' unless they're the same)
+    const contacts = await prisma.contact.findMany(); // Adjust if you have a separate contact table
+    console.log("✅ Fetched contacts:", contacts);
+    res.json(contacts); // Sending contacts back
   } catch (err) {
     console.error('❌ Error in getContacts:', err);
     res.status(500).json({ error: 'Error fetching contacts' });
@@ -69,7 +73,6 @@ export const createContact = async (req, res) => {
   }
 };
 
-
 // Update Contact
 export const updateContact = async (req, res) => {
   const { id } = req.params;
@@ -105,4 +108,3 @@ export const deleteContact = async (req, res) => {
     res.status(500).json({ error: 'Error deleting contact' });
   }
 };
-
