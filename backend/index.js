@@ -25,17 +25,21 @@ const allowedOrigins = [
 app.use(cors({
   origin: function (origin, callback) {
     console.log(`Incoming request from: ${origin}`);  // Debug log
-    // If origin is in the allowed origins list or there's no origin (e.g., in Postman or cURL)
-    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-      callback(null, true);  // Allow the origin if it matches
+
+        // Add this line to catch undefined origins
+    if (!origin) {
+      console.log("Request has no origin, likely a direct call or Postman/cURL");
+    }
+    // Allow requests without an origin (e.g., Postman, curl, etc.)
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
     } else {
-      // Log the error if the origin is not allowed
       console.log(`CORS error: ${origin} not allowed`);
-      callback(new Error('Not allowed by CORS'));  // Reject other origins
+      callback(new Error('Not allowed by CORS'));
     }
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  credentials: true  // Allow credentials (cookies, tokens)
+  credentials: true
 }));
 
 app.use(express.json());
