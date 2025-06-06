@@ -10,9 +10,9 @@ import {
 const router = express.Router();
 
 // Good RESTful design keeps these as follows:
-router.get('/api/contacts', getContacts);
-router.post('/api/contacts', createContact);
-router.put('/api/contacts/:id', updateContact);
-router.delete('/api/contacts/:id', deleteContact);
+router.get('/contacts', getContacts);
+router.post('/contacts', createContact);
+router.put('/contacts/:id', updateContact);
+router.delete('/contacts/:id', deleteContact);
 
 export default router;

@@ -1,8 +1,8 @@
-import 'dotenv/config';   // ← MUST be first to load .env
+import 'dotenv/config';  // ← MUST be first to load .env
 import cors from 'cors';
 import express from 'express';
 import authRoutes from './routes/authRoutes.js';
-import ambulanceRoutes from './routes/ambulanceRoutes.js'; // Import the ambulance routes
+import ambulanceRoutes from './routes/ambulanceRoutes.js';
 import shiftTypeRoutes from './routes/shiftTypeRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import shiftAssignmentRoutes from './routes/shiftAssignmentRoutes.js';
@@ -26,7 +26,7 @@ app.use(cors({
   origin: function (origin, callback) {
     console.log(`Incoming request from: ${origin}`);  // Debug log
 
-        // Add this line to catch undefined origins
+    // Add this line to catch undefined origins
     if (!origin) {
       console.log("Request has no origin, likely a direct call or Postman/cURL");
     }
@@ -47,15 +47,20 @@ app.use(express.json());
 // 🔐 Auth routes (signup/login)
 app.use('/api/auth', authRoutes);
 
+// Debug logging
+console.log("Registered ambulance routes");
 app.use('/api', ambulanceRoutes);  // Use ambulance routes here
 
 // 🚑 Shift template management
+console.log("Registered shift template routes");
 app.use('/api/shift-types', shiftTypeRoutes);
 
 // 📇 Contacts (employees) - unprotected read routes
+console.log("Registered contact routes");
 app.use('/api', contactRoutes);
 
 // 👥 User listing (EMT/Dispatcher) – requires login
+console.log("Registered user routes");
 app.use(
   '/api/users',
   authenticateToken,
@@ -64,9 +69,11 @@ app.use(
 );
 
 // ⏰ Shift assignments – protected per-method in routes
+console.log("Registered shift assignment routes");
 app.use('/api/shift-assignments', authenticateToken, shiftAssignmentRoutes);
 
 // 👑 Admin‑only pages
+console.log("Registered admin routes");
 app.use('/admin', adminRoutes);
 
 // Ensure your seeded admin account exists
