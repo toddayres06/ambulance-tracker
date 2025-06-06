@@ -18,11 +18,13 @@ export default defineConfig({
     postcss: path.resolve(__dirname, './postcss.config.js'),
   },
   server: {
-    proxy: {
-      '/api': {
-        target: 'http://127.0.0.1:3001',
-        changeOrigin: true,
-      },
+  proxy: {
+    '/': {
+      target: 'http://127.0.0.1:3001',  // Use your actual backend URL in production (for example, https://ambulance-tracker-7e8t.onrender.com)
+      changeOrigin: true,
+      rewrite: (path) => path.replace(/^\/api/, ''),  // Make sure '/api' is stripped from the path before reaching the backend
     },
   },
+},
+
 })
