@@ -17,7 +17,7 @@ const Contacts = () => {
     if (!token) return;  // Don't fetch contacts if there's no token
 
     // Fetch contacts with authorization header
-    axios.get(`${import.meta.env.VITE_API_URL}/contacts`, { headers })  // Updated URL
+    axios.get(`${import.meta.env.VITE_API_URL}/api/contacts`, { headers })  // Updated URL
       .then((res) => {
         console.log('Contacts fetched:', res.data); // Log the response data after fetch
         setContacts(res.data);  // Set contacts from the fetched data

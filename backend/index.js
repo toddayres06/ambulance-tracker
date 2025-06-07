@@ -57,7 +57,8 @@ app.use('/api/shift-types', shiftTypeRoutes);
 
 // 📇 Contacts (employees) - unprotected read routes
 console.log("Registered contact routes");
-app.use('/contacts', contactRoutes);
+app.use('/api/contacts', contactRoutes);  // Enforce '/api' prefix
+
 
 // 👥 User listing (EMT/Dispatcher) – requires login
 console.log("Registered user routes");
