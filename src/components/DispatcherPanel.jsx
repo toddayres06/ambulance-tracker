@@ -8,7 +8,7 @@ const DispatcherPanel = () => {
   const fetchAmbulances = async () => {
     try {
       // Updated to Render backend URL
-      const response = await fetch('https://ambulance-tracker-7e8t.onrender.com/api/ambulances');
+      const response = await fetch('https://ambulance-tracker-7e8t.onrender.com/ambulances');
       const data = await response.json();
       setAmbulances(data);
     } catch (error) {
@@ -28,7 +28,7 @@ const DispatcherPanel = () => {
 
     try {
       // Update the ambulance status via PATCH request
-      const response = await fetch(`https://ambulance-tracker-7e8t.onrender.com/api/ambulances/${id}`, {
+      const response = await fetch(`https://ambulance-tracker-7e8t.onrender.com/ambulances/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

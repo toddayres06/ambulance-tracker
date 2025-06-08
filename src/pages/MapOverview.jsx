@@ -9,7 +9,7 @@ const MapOverview = () => {
   // Fetch all ambulances and update positions
   const fetchAmbulances = async () => {
     try {
-      const res = await fetch('https://ambulance-tracker-7e8t.onrender.com/api/ambulances'); // Assuming this is your endpoint
+      const res = await fetch('https://ambulance-tracker-7e8t.onrender.com/ambulances'); // Assuming this is your endpoint
       const data = await res.json();
 
       if (Array.isArray(data)) {
@@ -25,7 +25,7 @@ const MapOverview = () => {
   // Send location to the backend
   const sendLocationToBackend = async (latitude, longitude) => {
     try {
-      const res = await fetch('https://ambulance-tracker-7e8t.onrender.com/api/location', {
+      const res = await fetch('https://ambulance-tracker-7e8t.onrender.com/location', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ latitude, longitude }),
