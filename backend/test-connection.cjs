@@ -1,9 +1,16 @@
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+// Ensure .env is loaded
+require('dotenv').config();  // Load environment variables
 
 const { Client } = require('pg');
 
+// Retrieve the database connection string from environment variables
 const client = new Client({
-  connectionString: 'postgresql://postgres:Mackship!@10@db.lmuxngwcygjqrqdjmfgf.supabase.co:5432/postgres?sslmode=require',
+  user: process.env.DB_USER,       // Database username from .env
+  password: process.env.DB_PASSWORD, // Database password from .env
+  host: process.env.DB_HOST,       // Database host from .env
+  port: process.env.DB_PORT,       // Database port from .env
+  database: process.env.DB_NAME,   // Database name from .env
+  ssl: process.env.DB_SSL === 'true', // Ensure SSL connection is enabled
 });
 
 client.connect()
