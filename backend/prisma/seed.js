@@ -1,10 +1,8 @@
-import { PrismaClient, Role } from '@prisma/client';
+import prisma from '../lib/prismaClient.js'; // Use the singleton instance
 import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs';
 
 dotenv.config({ path: './.env' });
-
-const prisma = new PrismaClient();
 
 async function main() {
   const existingAdmin = await prisma.user.findUnique({
@@ -22,7 +20,7 @@ async function main() {
         name: 'Admin User',
         email: 'admin@admin.com',
         station: 'Station 1',
-        role: Role.admin,
+        role: 'admin', // Ensure correct enum value here (Role.admin)
         active: true,
         shiftStart: new Date(),
         shiftEnd: new Date(Date.now() + 8 * 60 * 60 * 1000),
@@ -36,7 +34,7 @@ async function main() {
     const ambulance = await prisma.ambulance.create({
       data: {
         latitude: 29.7604, // Example: Houston coordinates
-        longitude: -95.3698, 
+        longitude: -95.3698,
         status: 'active',
         driverId: admin.id, // Assign it to the admin user as the driver
       },

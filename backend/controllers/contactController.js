@@ -1,15 +1,16 @@
-import { PrismaClient, Role } from '@prisma/client';
+// Import necessary modules
+import { Role } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-
-const prisma = new PrismaClient();
+// Import the shared Prisma instance
+import prisma from '../lib/prismaClient.js';
 
 // Get Contacts
 export const getContacts = async (req, res) => {
   console.log("🔍 Incoming request to get contacts...");
 
   try {
-    // Check if you're fetching from the correct table (should be 'contact', not 'user' unless they're the same)
-    const contacts = await prisma.user.findMany(); // Adjust if you have a separate contact table
+    // Check if you're fetching from the correct table (should be 'user', assuming contacts are just users)
+    const contacts = await prisma.user.findMany();
     console.log("✅ Fetched contacts:", contacts);
     res.json(contacts); // Sending contacts back
   } catch (err) {
@@ -25,13 +26,13 @@ export const createContact = async (req, res) => {
   const { name, email, role, station, password } = req.body;
 
   if (!email || !password || !role) {
-    return res.status(400).json({ message: 'Email, role and password are required.' });
+    return res.status(400).json({ message: 'Email, role, and password are required.' });
   }
 
-  // ✅ Normalize role to lowercase
+  // Normalize role to lowercase
   const normalizedRole = role.toLowerCase();
 
-  // ✅ Validate against enum
+  // Validate against enum
   if (!Object.values(Role).includes(normalizedRole)) {
     return res.status(400).json({ message: 'Invalid role provided.' });
   }
@@ -48,7 +49,7 @@ export const createContact = async (req, res) => {
       data: {
         name,
         email,
-        role: normalizedRole,  // <-- use normalized role here
+        role: normalizedRole,  // Use normalized role here
         station,
         password: hashedPassword,
         active: true,

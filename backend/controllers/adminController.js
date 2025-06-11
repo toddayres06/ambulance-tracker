@@ -1,7 +1,7 @@
+// Import necessary modules
 import bcrypt from 'bcryptjs';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+// Import the shared Prisma instance
+import prisma from '../lib/prismaClient.js';
 
 // Admin sets a password for an EMT
 export const setUserPassword = async (req, res) => {
