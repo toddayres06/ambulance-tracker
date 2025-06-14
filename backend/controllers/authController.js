@@ -22,6 +22,7 @@ export const signup = async (req, res) => {
 };
 
 export const login = async (req, res) => {
+  console.log("🔍 [LOGIN] Received request to login:", req.body);
   const { email, password } = req.body;
   const user = await findUserByEmail(email);
   if (!user) {

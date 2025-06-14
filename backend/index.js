@@ -8,7 +8,7 @@ import adminRoutes from './routes/adminRoutes.js';
 import shiftAssignmentRoutes from './routes/shiftAssignmentRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 import userRoutes from './routes/userRoutes.js';
-import prisma from './lib/prismaClient.js';
+// import prisma from './lib/prismaClient.js';
 import { authenticateToken } from './middleware/authMiddleware.js';
 import { seedAdminUser } from './models/User.js';
 
