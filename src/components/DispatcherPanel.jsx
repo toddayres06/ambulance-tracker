@@ -7,12 +7,13 @@ const DispatcherPanel = () => {
   // Fetch ambulances from the backend
   const fetchAmbulances = async () => {
     try {
-      // Updated to Render backend URL
-      const response = await fetch('https://ambulance-tracker-7e8t.onrender.com/ambulances');
+      console.log('🔍 Fetching ambulances...');
+      const response = await fetch('https://ambulance-tracker-7e8t.onrender.com/api/ambulances');
       const data = await response.json();
+      console.log('✅ Fetched ambulances:', data);
       setAmbulances(data);
     } catch (error) {
-      console.error('Error fetching ambulances:', error);
+      console.error('❌ Error fetching ambulances:', error);
     }
   };
 
@@ -27,8 +28,8 @@ const DispatcherPanel = () => {
     const toastId = toast.loading('Updating status...');
 
     try {
-      // Update the ambulance status via PATCH request
-      const response = await fetch(`https://ambulance-tracker-7e8t.onrender.com/ambulances/${id}`, {
+      console.log(`🔥 Updating ambulance status to "${newStatus}" for ambulance ID: ${id}`);
+      const response = await fetch(`https://ambulance-tracker-7e8t.onrender.com/api/ambulances/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -42,7 +43,7 @@ const DispatcherPanel = () => {
         toast.error('Failed to update status', { id: toastId });
       }
     } catch (error) {
-      console.error('Error updating ambulance status:', error);
+      console.error('❌ Error updating ambulance status:', error);
       toast.error('Error updating status', { id: toastId });
     }
   };

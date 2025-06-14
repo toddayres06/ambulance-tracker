@@ -15,7 +15,7 @@ const ContactList = ({ contacts, setContacts }) => {
       const headers = { Authorization: `Bearer ${token}` };  // Add Authorization header with token
 
       // Use the full URL with the base API URL for production
-      await axios.delete(`${import.meta.env.VITE_API_URL}/contacts/${id}`, { headers });
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/contacts/${id}`, { headers });
 
       // Remove the deleted contact from the state
       setContacts(prev => prev.filter(contact => contact.id !== id));

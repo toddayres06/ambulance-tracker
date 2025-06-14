@@ -10,7 +10,7 @@ const UnitTracker = () => {
   // Function to send location to backend
   const sendLocationToBackend = async (latitude, longitude) => {
     try {
-      const res = await fetch('https://ambulance-tracker-7e8t.onrender.com/location', {
+      const res = await fetch('https://ambulance-tracker-7e8t.onrender.com/api/location', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ latitude, longitude }),

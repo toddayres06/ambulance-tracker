@@ -9,10 +9,24 @@ import {
 
 const router = express.Router();
 
-// Good RESTful design keeps these as follows:
-router.get('/contacts', getContacts);
-router.post('/contacts', createContact);
-router.put('/contacts/:id', updateContact);
-router.delete('/contacts/:id', deleteContact);
+router.get('/api/contacts', (req, res, next) => {
+  console.log('🔍 Request to get contacts');  // Log the incoming GET request
+  next();  // Continue to the controller
+}, getContacts);
+
+router.post('/api/contacts', (req, res, next) => {
+  console.log('🔍 Request to create a contact:', req.body);  // Log the incoming POST request
+  next();  // Continue to the controller
+}, createContact);
+
+router.put('/:id', (req, res, next) => {
+  console.log('🔍 Request to update contact:', req.body);  // Log the incoming PUT request
+  next();  // Continue to the controller
+}, updateContact);
+
+router.delete('/:id', (req, res, next) => {
+  console.log('🔍 Request to delete contact with ID:', req.params.id);  // Log the incoming DELETE request
+  next();  // Continue to the controller
+}, deleteContact);
 
 export default router;
