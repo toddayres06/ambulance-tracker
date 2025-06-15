@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { useAuth } from '../context/AuthContext'; // Import the useAuth hook
 
 const MapOverview = () => {
+  const { user } = useAuth();  // Assuming user data contains driverId (adjust based on your context structure)
   const [position, setPosition] = useState(null);  // To store the user's current location
   const [ambulances, setAmbulances] = useState([]);  // To store ambulance data
   const [error, setError] = useState(null);  // To store any errors
@@ -26,12 +28,19 @@ const MapOverview = () => {
 
   // Send location to the backend
   const sendLocationToBackend = async (latitude, longitude, status = 'active') => {
+    if (!user) {
+      console.error('❌ No user data found, cannot send location');
+      return;
+    }
+
+    const driverId = user.id;  // Assuming user object has the driverId (adjust based on your context structure)
+
     try {
-      console.log('🔥 Sending location to backend:', { latitude, longitude });
+      console.log('🔥 Sending location to backend:', { latitude, longitude, driverId, status });
       const res = await fetch('https://ambulance-tracker-7e8t.onrender.com/api/location', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ latitude, longitude, status }),
+        body: JSON.stringify({ latitude, longitude, status, driverId }),  // Include driverId
       });
 
       if (!res.ok) throw new Error('Failed to send location');

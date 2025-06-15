@@ -1,27 +1,29 @@
 import prisma from '../lib/prismaClient.js'; // Make sure this matches the actual path to your prismaClient.js
 
-// In your backend, inside ambulanceController.js
 export const updateLocation = async (req, res) => {
-  const { latitude, longitude, status } = req.body; // Get latitude, longitude, and status from request body
+  const { latitude, longitude, status, driverId } = req.body; // Get latitude, longitude, status, and driverId from the request body
 
   // Log incoming data to confirm it's being received correctly
-  console.log('🔍 Received data to update location:', { latitude, longitude, status });
+  console.log('🔍 Received data to update location:', { latitude, longitude, status, driverId });
 
   // Add additional validation to confirm all data is present
-  if (!latitude || !longitude || !status) {
-    console.error('❌ Missing required fields: latitude, longitude, or status.');
-    return res.status(400).json({ error: 'Latitude, longitude, and status are required.' });
+  if (!latitude || !longitude || !status || !driverId) {
+    console.error('❌ Missing required fields: latitude, longitude, status, or driverId.');
+    return res.status(400).json({ error: 'Latitude, longitude, status, and driverId are required.' });
   }
 
   try {
-    // Create a new ambulance record with the provided latitude, longitude, and status
-    console.log('🔥 Attempting to create new ambulance with data:', { latitude, longitude, status });
+    // Create or update ambulance record with the provided latitude, longitude, status, and driverId
+    console.log('🔥 Attempting to create new ambulance with data:', { latitude, longitude, status, driverId });
 
     const ambulance = await prisma.ambulance.create({
       data: {
         latitude,  // Latitude from the request body
         longitude, // Longitude from the request body
         status,    // Status from the request body
+        driver: {  // Create or connect driver based on driverId
+          connect: { id: driverId },  // Connect to the user with the provided driverId
+        },
       },
     });
 
@@ -34,7 +36,6 @@ export const updateLocation = async (req, res) => {
   }
 };
 
-// Get all ambulances' locations
 export const getAllAmbulances = async (req, res) => {
   console.log('🔍 Fetching all ambulances...');
 
