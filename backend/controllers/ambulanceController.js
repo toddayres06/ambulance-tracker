@@ -16,6 +16,7 @@ export const updateLocation = async (req, res) => {
   try {
     // Create a new ambulance record with the provided latitude, longitude, and status
     console.log('🔥 Attempting to create new ambulance with data:', { latitude, longitude, status });
+
     const ambulance = await prisma.ambulance.create({
       data: {
         latitude,  // Latitude from the request body
@@ -28,7 +29,8 @@ export const updateLocation = async (req, res) => {
     res.status(200).json(ambulance); // Return the created ambulance object as a response
   } catch (error) {
     console.error('❌ Error updating location:', error); // Log the error for debugging
-    res.status(500).json({ error: 'Error updating location' }); // Return an error response if something goes wrong
+    console.error('Stack trace:', error.stack); // Capture stack trace for more context
+    res.status(500).json({ error: 'Error updating location', message: error.message }); // Return an error response with the message
   }
 };
 
@@ -42,6 +44,7 @@ export const getAllAmbulances = async (req, res) => {
     res.status(200).json(ambulances);
   } catch (error) {
     console.error('❌ Error fetching ambulances:', error);
-    res.status(500).json({ error: 'Error fetching ambulances' });
+    console.error('Stack trace:', error.stack); // Capture stack trace for more context
+    res.status(500).json({ error: 'Error fetching ambulances', message: error.message });
   }
 };

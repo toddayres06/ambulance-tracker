@@ -4,7 +4,14 @@ import { updateLocation, getAllAmbulances } from '../controllers/ambulanceContro
 const router = express.Router();
 
 // Define the route for getting ambulance data
-router.post('/location', updateLocation);  // This will call the `updateLocation` function in the controller
-router.get('/ambulances', getAllAmbulances);
+router.post('/location', (req, res, next) => {
+  console.log('🔍 Request to update ambulance location received');
+  next(); // Proceed to the controller
+}, updateLocation);
+
+router.get('/ambulances', (req, res, next) => {
+  console.log('🔍 Request to get all ambulances received');
+  next(); // Proceed to the controller
+}, getAllAmbulances);
 
 export default router;
