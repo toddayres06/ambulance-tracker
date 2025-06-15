@@ -60,24 +60,23 @@ const MapOverview = () => {
     }
 
     const watchId = navigator.geolocation.watchPosition(
-      (pos) => {
-        const { latitude, longitude } = pos.coords;
-        setPosition([latitude, longitude]);  // Update position state with current location
-        console.log('Updating location to server:', { latitude, longitude });
+  (pos) => {
+    const { latitude, longitude } = pos.coords;
+    setPosition([latitude, longitude]);
+    console.log('Updating location to server:', { latitude, longitude });
+    sendLocationToBackend(latitude, longitude); // Send precise location
+  },
+  (err) => {
+    setError('Unable to retrieve location');
+    console.error(err);
+  },
+  {
+    enableHighAccuracy: true, // Ensure high accuracy
+    maximumAge: 1000, // No caching, always fetch new data
+    timeout: 5000, // Timeout for getting the location is 5 seconds
+  }
+);
 
-        // Send location to backend
-        sendLocationToBackend(latitude, longitude);
-      },
-      (err) => {
-        setError('Unable to retrieve location');
-        console.error(err); // Log the error in case of failure
-      },
-      {
-        enableHighAccuracy: true, // Get the most accurate location possible
-        maximumAge: 10000, // Accept location data that is up to 10 seconds old
-        timeout: 30000, // Increase timeout to 30 seconds to avoid unnecessary timeouts
-      }
-    );
 
     // Clean up when the component unmounts
     return () => navigator.geolocation.clearWatch(watchId);
