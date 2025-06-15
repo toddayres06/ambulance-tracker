@@ -9,12 +9,12 @@ import {
 
 const router = express.Router();
 
-router.get('/api/contacts', (req, res, next) => {
+router.get('/', (req, res, next) => {
   console.log('🔍 Request to get contacts');  // Log the incoming GET request
   next();  // Continue to the controller
 }, getContacts);
 
-router.post('/api/contacts', (req, res, next) => {
+router.post('/', (req, res, next) => {
   console.log('🔍 Request to create a contact:', req.body);  // Log the incoming POST request
   next();  // Continue to the controller
 }, createContact);
