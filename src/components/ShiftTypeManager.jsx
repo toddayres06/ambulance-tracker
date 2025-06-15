@@ -25,7 +25,7 @@ const ShiftTypeManager = () => {
   // Fetching shift types with full URL for production
   const fetchShiftTypes = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/shift-types`, { headers });  // Updated with headers
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/shift-types`, { headers });  // Updated with headers
       setShiftTypes(res.data);
     } catch (error) {
       console.error('Error fetching shift types:', error);
