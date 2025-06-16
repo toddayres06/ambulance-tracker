@@ -30,9 +30,9 @@ const ShiftAssignments = () => {
         console.log('Fetching data with token:', token);  // Log token
 
         const [assignRes, typesRes, usersRes] = await Promise.all([
-          axios.get(`${import.meta.env.VITE_API_URL}/shift-assignments`, { headers }),  // Updated API URL
-          axios.get(`${import.meta.env.VITE_API_URL}/shift-types`, { headers }),         // Updated API URL
-          axios.get(`${import.meta.env.VITE_API_URL}/users`, { headers }),               // Updated API URL
+          axios.get(`${import.meta.env.VITE_API_URL}/api/shift-assignments`, { headers }),  // Updated API URL
+          axios.get(`${import.meta.env.VITE_API_URL}/api/shift-types`, { headers }),         // Updated API URL
+          axios.get(`${import.meta.env.VITE_API_URL}/api/users`, { headers }),               // Updated API URL
         ]);
 
         // Log the responses to verify the data being returned
@@ -65,7 +65,7 @@ const ShiftAssignments = () => {
 
     try {
       console.log('Attempting to create assignment with data:', assignmentData); // Debugging log
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/shift-assignments`, assignmentData, { headers }); // Updated API URL
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/shift-assignments`, assignmentData, { headers }); // Updated API URL
       setShifts(prev => [...prev, res.data]);
       setNewAssign({ userId: '', shiftTypeId: '', date: '' });
     } catch (err) {
